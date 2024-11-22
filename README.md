@@ -1,2 +1,2 @@
 # SimpleTextArea
-Simple Text Area extension for Chrmium browsers
+Simple Text Area extension for Chromium browsers
