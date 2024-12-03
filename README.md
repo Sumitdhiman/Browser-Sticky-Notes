@@ -24,5 +24,5 @@ Simple Text Area extension for Chromium browsers that opens a text area at the t
 
 ## Acknowledgments
 
-- Thanks to myself who have helped improve this project.
+- Thanks to myself for helping improve this project.
 
