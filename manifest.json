@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "Text Area Extension",
-  "version": "1.0",
-  "description": "Opens a text area when the extension is clicked.",
+  "name": "Browser Sticky Notes",
+  "version": "1.1",
+  "description": "Opens a Text Panel when clicked.",
   "action": {
     "default_popup": "popup.html"
   },
@@ -11,5 +11,20 @@
     "48": "icon48.png",
     "128": "icon128.png"
   },
-  "permissions": []
+  "permissions": [
+    "storage"
+  ],
+
+  "background": {
+    "service_worker": "background.js"
+  },
+  "commands": {
+    "open_popup": {
+      "suggested_key": {
+        "default": "Alt+N"
+      },
+      "description": "Opens the popup"
+    }
+  },
+    "host_permissions":["<all_urls>"]
 }
