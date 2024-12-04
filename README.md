@@ -1,6 +1,6 @@
-# SimpleTextArea
+# BrowserStickyNotes
 
-Simple Text Area extension for Chromium browsers that opens a text area at the top right of the address bar.
+Browser Sticky Notes for Chromium browsers that opens a text area at the top right of the address bar.
 
 ## Features
 
