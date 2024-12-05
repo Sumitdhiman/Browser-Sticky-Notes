@@ -4,14 +4,16 @@ Browser Sticky Notes for Chromium browsers that opens a text area at the top rig
 
 ## Features
 
-- Opens a text area at the top right of the address bar.
+- Opens a Sticky Notes text area at the top right of the address bar.
 - Easy to use and lightweight.
 - Perfect for quick notes and reminders.
+- Export the text in TXT format, which can be turned off.
+- Change the Palette colours.
 
 ## Installation
 
 1. Download the extension from the Releases.
-2. Click on the extension icon to open the text area.
+2. Click on the extension icon to open the Sticky Notes.
 
 ## Usage
 
@@ -24,5 +26,5 @@ Browser Sticky Notes for Chromium browsers that opens a text area at the top rig
 
 ## Acknowledgments
 
-- Thanks to myself for helping improve this project.
+- Thanks to Claude AI and me for helping improve this project.
 
