@@ -170,5 +170,43 @@ margin-left: 5px;
             color: #27ae60;
         }
 
+
+/* Basic Button Styling */
+.action-button {
+    background-color: #4CAF50; /* Green */
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: block; /* Ensure buttons are block-level elements */
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 5px; /* Rounded corners */
+    transition: background-color 0.3s ease; /* Smooth transition on hover */
+    width: calc(100% - 10px); /* Adjust width to match textarea */
+    box-sizing: border-box;  /* Include padding and border in width */
+    margin-left: 5px;
+}
+
+/* Hover Effect */
+.action-button:hover {
+    background-color: #3e8e41; /* Darker green on hover */
+}
+
+/* Focus/Active State */
+.action-button:focus, .action-button:active {
+    outline: none; /* Remove default outline */
+    box-shadow: 0 0 0 2px #4CAF50; /* Add a subtle green glow */
+}
+
+/* Disabled State (if needed) */
+.action-button:disabled {
+    background-color: #ddd;
+    color: #666;
+    cursor: default;
+}
+
 		
 </style>

@@ -2,6 +2,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const settingsIcon = document.getElementById('settingsIcon');
     const textArea = document.getElementById("textArea");
     const exportButton = document.getElementById('exportButton');
+    const copyButton = document.getElementById('copyButton'); // New Copy Button
 
     settingsIcon.addEventListener('click', () => {
         chrome.runtime.openOptionsPage();
@@ -15,10 +16,15 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.setItem("textAreaContent", textArea.value);
     });
 
-    // Load background color and export button visibility from storage
-    chrome.storage.sync.get({ 'textAreaBgColor': '#F2FFFF', 'showExportButton': false }, (items) => {
+    // Load background color and button visibility from storage
+    chrome.storage.sync.get({ 
+        'textAreaBgColor': '#F2FFFF', 
+        'showExportButton': false, 
+        'showCopyButton': false  // New Preference
+    }, (items) => {
         textArea.style.backgroundColor = items.textAreaBgColor;
         exportButton.style.display = items.showExportButton ? 'block' : 'none';
+        copyButton.style.display = items.showCopyButton ? 'block' : 'none'; // Toggle Copy Button
     });
 
     exportButton.addEventListener('click', () => {
@@ -35,7 +41,17 @@ document.addEventListener('DOMContentLoaded', () => {
         URL.revokeObjectURL(url); // Release the URL object
     });
 
-    //do not modify the following function.
+    // Copy All Text Functionality
+    copyButton.addEventListener('click', () => {
+        navigator.clipboard.writeText(textArea.value).then(() => {
+            // Optional: Provide feedback to the user
+            alert('Text copied to clipboard!');
+        }, (err) => {
+            console.error('Could not copy text: ', err);
+        });
+    });
+
+    // Do not modify the following function.
     chrome.storage.sync.get('textAreaBgColor', function(data) {
         if (data.textAreaBgColor) {
             textArea.style.backgroundColor = data.textAreaBgColor;
