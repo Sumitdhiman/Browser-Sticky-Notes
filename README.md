@@ -9,6 +9,7 @@ Browser Sticky Notes for Chromium browsers that opens a text area at the top rig
 - Perfect for quick notes and reminders.
 - Export the text in TXT format, which can be turned off.
 - Change the Palette colours.
+- You can check the Word Count, change Font size and Copy all text with a single click(1.6)
 
 ## Installation
 
