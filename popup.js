@@ -50,6 +50,14 @@ document.addEventListener('DOMContentLoaded', () => {
             console.error('Could not copy text: ', err);
         });
     });
+	
+	   chrome.storage.sync.get('useLargeFont', (data) => {
+        if (data.useLargeFont) {
+            textArea.style.fontSize = '18px'; // Or your preferred large font size
+        } else {
+            textArea.style.fontSize = '14px'; // Your default font size
+        }
+    });
 
     // Do not modify the following function.
     chrome.storage.sync.get('textAreaBgColor', function(data) {
@@ -57,4 +65,17 @@ document.addEventListener('DOMContentLoaded', () => {
             textArea.style.backgroundColor = data.textAreaBgColor;
         }
     });
+	const wordCount = document.getElementById('wordCount');
+function updateWordCount() {
+    const text = textArea.value.trim();
+    const words = text ? text.split(/\s+/).length : 0;
+    wordCount.textContent = `Words: ${words}`;
+}
+textArea.addEventListener('input', () => {
+    localStorage.setItem("textAreaContent", textArea.value);
+    updateWordCount();
+});
+// Initialize word count on load
+updateWordCount();
+	
 });

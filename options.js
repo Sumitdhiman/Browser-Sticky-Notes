@@ -56,10 +56,30 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+
+
     saveButton.addEventListener('click', () => {
         chrome.storage.sync.set({ textAreaBgColor: selectedColor }, () => {
             statusDiv.textContent = 'Settings saved!';
             setTimeout(() => { statusDiv.textContent = ''; }, 1500);
         });
+    });
+	
+	
+
+ const useLargeFontCheckbox = document.getElementById('useLargeFont');
+
+    // Load saved preferences
+    chrome.storage.sync.get({
+        // ... (Your existing preferences)
+        'useLargeFont': false // Default font size
+    }, (items) => {
+        // ... (Your existing loading code)
+        useLargeFontCheckbox.checked = items.useLargeFont;
+    });
+
+    // Save preference when "Use Large Font" checkbox changes
+    useLargeFontCheckbox.addEventListener('change', () => {
+        chrome.storage.sync.set({ 'useLargeFont': useLargeFontCheckbox.checked });
     });
 });
