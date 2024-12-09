@@ -1,17 +1,21 @@
+
+
 <!DOCTYPE html>
-<html >
+<html>
 <head>
-  <title>Browser Sticky Notes</title>
-   <link rel="stylesheet" href="styles.css">
+    <title>Browser Sticky Notes</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-<div class="header">
-    <h1 class="title">Browser Sticky Notes</h1>
-    <img src="gear.png" id="settingsIcon" title="Settings">
-</div>
-  <textarea id="textArea" placeholder="Type here..."></textarea>
-  
-  <button id="exportButton">Export as .txt</button>
-  <script src="popup.js"></script> 
+    <div class="header">
+        <h1 class="title">Browser Sticky Notes</h1>
+        <img src="gear.png" id="settingsIcon" title="Settings">
+    </div>
+    <textarea id="textArea" placeholder="Type here..."></textarea>
+	<div id="wordCount">Words: 0</div>
+    <button id="exportButton" class="action-button">Export as .txt</button>
+    <!-- New Copy Button -->
+    <button id="copyButton" class="action-button">Copy All Text</button>
+    <script src="popup.js"></script> 
 </body>
 </html>
