@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const useLargeFontCheckbox = document.getElementById('useLargeFont');
     const showWordCountCheckbox = document.getElementById('showWordCount'); // Checkbox for Word Count
 
+
     const pastelColors = [
         '#FFE4E1', '#F0FFF0', '#F0F8FF', '#F5F5DC', '#FFF0F5',
         '#E6E6FA', '#F0FFFF', '#FFF5EE', '#F5FFFA', '#FAFAD2',
@@ -18,6 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Load saved preferences
     chrome.storage.sync.get({
         'showExportButton': false,
+
         'enableTabs': true, // Default is true
         'textAreaBgColor': selectedColor, // Default color
         'useLargeFont': false,
@@ -36,6 +38,7 @@ document.addEventListener('DOMContentLoaded', () => {
         chrome.storage.sync.set({ 'showExportButton': showExportCheckbox.checked });
     });
 
+
     // Save preference when "Enable Tabs" checkbox changes
     enableTabsCheckbox.addEventListener('change', () => {
         chrome.storage.sync.set({ 'enableTabs': enableTabsCheckbox.checked });
@@ -48,7 +51,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Save preference when "Show Word Count" checkbox changes
     showWordCountCheckbox.addEventListener('change', () => {
-        chrome.storage.sync.set({ 'showWordCount': showWordCountCheckbox.checked });
+        chrome.storage.sync.set({ 'showWordCount': showWordCountCheckbox.checked })
     });
 
     function renderPalette() {
@@ -72,10 +75,31 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+
+
     saveButton.addEventListener('click', () => {
         chrome.storage.sync.set({ textAreaBgColor: selectedColor }, () => {
             statusDiv.textContent = 'Nice color! Settings saved!';
+
             setTimeout(() => { statusDiv.textContent = ''; }, 1500);
         });
+    });
+	
+	
+
+ const useLargeFontCheckbox = document.getElementById('useLargeFont');
+
+    // Load saved preferences
+    chrome.storage.sync.get({
+        // ... (Your existing preferences)
+        'useLargeFont': false // Default font size
+    }, (items) => {
+        // ... (Your existing loading code)
+        useLargeFontCheckbox.checked = items.useLargeFont;
+    });
+
+    // Save preference when "Use Large Font" checkbox changes
+    useLargeFontCheckbox.addEventListener('change', () => {
+        chrome.storage.sync.set({ 'useLargeFont': useLargeFontCheckbox.checked });
     });
 });

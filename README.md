@@ -12,6 +12,7 @@ Browser Sticky Notes for Chromium browsers that opens a text area at the top rig
 - All customization toggles can be turned off depending on the user flow.
 - You can donate if you like.
 
+
 ## Installation
 
 1. Download the extension from the Releases.

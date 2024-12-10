@@ -2,6 +2,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const settingsIcon = document.getElementById('settingsIcon');
     const textArea = document.getElementById('textArea');
     const exportButton = document.getElementById('exportButton');
+
     const wordCount = document.getElementById('wordCount');
     const tabContainer = document.querySelector('.tab-container');
     const tabButtons = document.querySelectorAll('.tab-button');
@@ -12,6 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
     settingsIcon.addEventListener('click', () => {
         chrome.runtime.openOptionsPage();
     });
+
 
     // Load settings from storage
     chrome.storage.sync.get({
@@ -132,6 +134,7 @@ document.addEventListener('DOMContentLoaded', () => {
             saveSingleNoteContent();
         }
         updateWordCount();
+
     });
 
     
@@ -154,6 +157,7 @@ document.addEventListener('DOMContentLoaded', () => {
         URL.revokeObjectURL(url);
     });
 
+
     // Word Count Function
     function updateWordCount() {
         if (wordCount.style.display === 'none') return; // Do not update if hidden
@@ -161,4 +165,41 @@ document.addEventListener('DOMContentLoaded', () => {
         const words = text ? text.split(/\s+/).length : 0;
         wordCount.textContent = `Words: ${words}`;
     }
+
+    // Copy All Text Functionality
+    copyButton.addEventListener('click', () => {
+        navigator.clipboard.writeText(textArea.value).then(() => {
+            // Optional: Provide feedback to the user
+            alert('Text copied to clipboard!');
+        }, (err) => {
+            console.error('Could not copy text: ', err);
+        });
+    });
+	
+	   chrome.storage.sync.get('useLargeFont', (data) => {
+        if (data.useLargeFont) {
+            textArea.style.fontSize = '18px'; // Or your preferred large font size
+        } else {
+            textArea.style.fontSize = '14px'; // Your default font size
+        }
+    });
+
+    // Do not modify the following function.
+    chrome.storage.sync.get('textAreaBgColor', function(data) {
+        if (data.textAreaBgColor) {
+            textArea.style.backgroundColor = data.textAreaBgColor;
+        }
+    });
+	const wordCount = document.getElementById('wordCount');
+function updateWordCount() {
+    const text = textArea.value.trim();
+    const words = text ? text.split(/\s+/).length : 0;
+    wordCount.textContent = `Words: ${words}`;
+}
+textArea.addEventListener('input', () => {
+    localStorage.setItem("textAreaContent", textArea.value);
+    updateWordCount();
+});
+// Initialize word count on load
+updateWordCount();
 });

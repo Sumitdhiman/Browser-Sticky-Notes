@@ -11,6 +11,7 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
         })
           .then(() => console.log('injected script into: ' + tab.url))
           .catch(err => console.log(err));
+
     }
 });
 chrome.runtime.onInstalled.addListener((details) => {

@@ -29,7 +29,57 @@ textarea {
     box-sizing: border-box; /* Include padding in width/height */
     border: 1px solid #ccc; /* Add a border for better visibility */
     border-radius: 5px; /* Add rounded corners */
-    
+
+  }
+  
+  #wordCount {
+    text-align: right;
+    font-size: 12px;
+    color: #555;
+    margin-top: 5px;
+}
+
+  /* Basic Button Styling */
+#exportButton {
+background-color: #4CAF50; /* Green */
+border: none;
+color: white;
+padding: 10px 20px;
+text-align: center;
+text-decoration: none;
+display: inline-block;
+font-size: 16px;
+margin: 4px 2px;
+cursor: pointer;
+border-radius: 5px; /* Rounded corners */
+transition: background-color 0.3s ease; /* Smooth transition on hover */
+}
+
+/* Hover Effect */
+#exportButton:hover {
+background-color: #3e8e41; /* Darker green on hover */
+}
+
+/* Focus/Active State */
+#exportButton:focus, #exportButton:active {
+outline: none; /* Remove default outline */
+box-shadow: 0 0 0 2px #4CAF50; /* Add a subtle green glow */
+}
+
+/* Disabled State (if needed) */
+#exportButton:disabled {
+background-color: #ddd;
+color: #666;
+cursor: default;
+}
+
+/*  Optional: Match Text Area Styling*/
+#exportButton {
+  width: calc(100% - 10px); /* Adjust width to match textarea */
+  box-sizing: border-box;  /* Include padding and border in width */
+  margin-top: 10px; /* Add some spacing */
+margin-left: 5px;
+
 }
 
 /* Header Styles */
@@ -155,6 +205,7 @@ textarea {
 /* Options Page Styles */
 
 
+
 .container {
     background-color: white;
     padding: 25px;
@@ -264,4 +315,3 @@ button#saveButton:hover {
     justify-content: flex-start;
     align-items: flex-start;
 }
-
