@@ -134,6 +134,7 @@ document.addEventListener('DOMContentLoaded', () => {
         updateWordCount();
     });
 
+    
     // Export Button Click
     exportButton.addEventListener('click', () => {
         const text = textArea.value;

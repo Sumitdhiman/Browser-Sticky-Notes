@@ -1,45 +1,67 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>BSN Options</title>
+    <title>Customize Browser Sticky Notes</title>
     <link rel="stylesheet" href="styles.css">
 </head>
-<body class="optns">
-    <div class="container">
-        <h2>Choose Background Color</h2>
-        <div id="colorPalette"></div>
-        <button id="saveButton">Save</button>
-        <div id="status"></div>
-    </div>
-    <div class="option-row">
-        <label for="enableTabs" style="font-size: 15px; font-weight: 500;">Enable Multiple Notes (Tabs):</label>
-        <input type="checkbox" id="enableTabs" style="width: 18px; height: 18px; margin-left: 10px; cursor: pointer;" checked>
-    </div>
-    <div class="option-row">
-        <div class="checkbox-wrapper">
-          <label for="showExport" style="font-size: 15px; font-weight: 500; ">Show Export Button:</label>
-          <input type="checkbox" id="showExport" style="width: 18px; height: 18px; cursor: pointer; margin-left: 65px;">
+<body class="bodyoptns">
+<div class="main-content">
+    <div class="options-grid">
+        <div class="first-column">
+        <div class="container">
+            <h2>Choose Background Color</h2>
+            <div id="colorPalette"></div>
+            <button id="saveButton">Save</button>
+            <div id="status"></div>
+            </div>
         </div>
-    </div>
-    <div class="option-row">
-        <div class="checkbox-wrapper">
-          <label for="useLargeFont" style="font-size: 15px; font-weight: 500;">Use Large Font:</label>
-          <input type="checkbox" id="useLargeFont" style="width: 18px; height: 18px; cursor: pointer; margin-left: 100px">
+
+       
+        <div class="second-column">
+        <div class="sidebar">
+            <div class="option-row">
+                <label for="enableTabs" style="font-size: 15px; font-weight: 500;">Enable Multiple Notes (Tabs):</label>
+                <input type="checkbox" id="enableTabs" style="width: 18px; height: 18px; margin-left: 10px; cursor: pointer;" checked>
+            </div>
+            <div class="option-row">
+                <div class="checkbox-wrapper">
+                    <label for="showExport" style="font-size: 15px; font-weight: 500;">Show Export Button:</label>
+                    <input type="checkbox" id="showExport" style="width: 18px; height: 18px; cursor: pointer; margin-left: 65px;">
+                </div>
+            </div>
+            <div class="option-row">
+                <div class="checkbox-wrapper">
+                    <label for="useLargeFont" style="font-size: 15px; font-weight: 500;">Use Large Font:</label>
+                    <input type="checkbox" id="useLargeFont" style="width: 18px; height: 18px; cursor: pointer; margin-left: 100px">
+                </div>
+            </div>
+            <div class="option-row">
+                <div class="checkbox-wrapper">
+                    <label for="showWordCount" style="font-size: 15px; font-weight: 500;">Show Word Count:</label>
+                    <input type="checkbox" id="showWordCount" style="width: 18px; height: 18px; cursor: pointer; margin-left: 77px" checked>
+                </div>
+            </div>
+            <div class="bmc-button" style="margin-left:7px;">  <!-- Buy Me a Coffee button container -->
+                <a href="https://www.buymeacoffee.com/yourwindowsguide" target="_blank">
+                    <img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee">
+                </a>
+            </div>
+            <!-- Footer Links -->
+            <div style="clear: both; margin-top: 20px; margin-left: 7px; text-align: left ; font-size: 13px; color: #666;">
+                <p>Questions/Bug/Ideas? Report it at <a href="https://github.com/Sumitdhiman/Browser-Sticky-Notes/issues" style="color: #4CAF50; text-decoration: none;">Github.</a></p>
+                <p>Designed with &hearts; by <a href="https://yourwindowsguide.com" style="color: #4CAF50; text-decoration: none;">Your Windows Guide</a></p>
+            </div>
         </div>
     </div>
 
-    <div class="option-row">
-        <div class="checkbox-wrapper">
-            <label for="showWordCount" style="font-size: 15px; font-weight: 500;">Show Word Count:</label>
-            <input type="checkbox" id="showWordCount" style="width: 18px; height: 18px; cursor: pointer; margin-left: 77px" checked>
+    <div class="second-column">
+        <div class="shortcut-info">
+            <h3>Keyboard Shortcut</h3>
+            <p>Use <strong>Alt + N</strong> to open the sticky notes popup.</p>
+            <p>You can customize this shortcut in your browser's extension settings.</p>
         </div>
     </div>
 
     <script src="options.js"></script>
-    <!-- Footer Links -->
-    <div style="margin-top: 20px; margin-left: 12px; text-align: left ; font-size: 13px; color: #666;">
-        <p>Questions/Bug/Ideas? Report it at <a href="https://github.com/Sumitdhiman/Browser-Sticky-Notes/issues" style="color: #4CAF50; text-decoration: none;">Github.</a></p>
-        <p>Designed with &hearts; by <a href="https://yourwindowsguide.com" style="color: #4CAF50; text-decoration: none;">Your Windows Guide</a></p>
-    </div>
 </body>
 </html>

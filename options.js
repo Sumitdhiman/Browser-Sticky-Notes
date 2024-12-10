@@ -74,7 +74,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     saveButton.addEventListener('click', () => {
         chrome.storage.sync.set({ textAreaBgColor: selectedColor }, () => {
-            statusDiv.textContent = 'Color saved, Nice Choice!';
+            statusDiv.textContent = 'Nice color! Settings saved!';
             setTimeout(() => { statusDiv.textContent = ''; }, 1500);
         });
     });
