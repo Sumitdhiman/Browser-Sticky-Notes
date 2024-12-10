@@ -1,15 +1,17 @@
-# BrowserStickyNotes
-
-Browser Sticky Notes for Chromium browsers that opens a text area at the top right of the address bar.
+# Browser Sticky Notes version 2.3
+Browser Sticky Notes for Chromium browsers that opens a text area at the top right of the address bar, which is easy to use and lightweight. It is perfect utility for quick notes.
 
 ## Features
 
 - Opens a Sticky Notes text area at the top right of the address bar.
-- Easy to use and lightweight.
-- Perfect for quick notes and reminders.
+- Can support three notes at once using Tabs.
+- Word Counter Built-in
 - Export the text in TXT format, which can be turned off.
 - Change the Palette colours.
-- You can check the Word Count, change Font size and Copy all text with a single click(1.6)
+- Change the Font size for better accessibility.
+- All customization toggles can be turned off depending on the user flow.
+- You can donate if you like.
+
 
 ## Installation
 
@@ -18,12 +20,9 @@ Browser Sticky Notes for Chromium browsers that opens a text area at the top rig
 
 ## Usage
 
-- Click on the extension icon to open the text area.
+- Click on the extension icon to open the Sticky Note.
 - Type your notes or reminders in the text area.
 - The text area will remain open until you close it.
-
-
-
 
 ## Acknowledgments
 

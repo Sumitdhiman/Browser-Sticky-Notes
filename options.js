@@ -3,7 +3,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const saveButton = document.getElementById('saveButton');
     const statusDiv = document.getElementById('status');
     const showExportCheckbox = document.getElementById('showExport');
-    const showCopyCheckbox = document.getElementById('showCopy'); // New Copy Toggle
+    const enableTabsCheckbox = document.getElementById('enableTabs'); // Checkbox for Tabs
+    const useLargeFontCheckbox = document.getElementById('useLargeFont');
+    const showWordCountCheckbox = document.getElementById('showWordCount'); // Checkbox for Word Count
+
 
     const pastelColors = [
         '#FFE4E1', '#F0FFF0', '#F0F8FF', '#F5F5DC', '#FFF0F5',
@@ -16,11 +19,16 @@ document.addEventListener('DOMContentLoaded', () => {
     // Load saved preferences
     chrome.storage.sync.get({
         'showExportButton': false,
-        'showCopyButton': false,  // New Preference
-        'textAreaBgColor': selectedColor // Default color
+
+        'enableTabs': true, // Default is true
+        'textAreaBgColor': selectedColor, // Default color
+        'useLargeFont': false,
+        'showWordCount': true // Default is true
     }, (items) => {
         showExportCheckbox.checked = items.showExportButton;
-        showCopyCheckbox.checked = items.showCopyButton; // Load Copy Button Preference
+        enableTabsCheckbox.checked = items.enableTabs;
+        useLargeFontCheckbox.checked = items.useLargeFont;
+        showWordCountCheckbox.checked = items.showWordCount; // Load Word Count preference
         selectedColor = items.textAreaBgColor || selectedColor;
         renderPalette();
     });
@@ -30,9 +38,20 @@ document.addEventListener('DOMContentLoaded', () => {
         chrome.storage.sync.set({ 'showExportButton': showExportCheckbox.checked });
     });
 
-    // Save preference when "Show Copy Button" checkbox changes
-    showCopyCheckbox.addEventListener('change', () => {
-        chrome.storage.sync.set({ 'showCopyButton': showCopyCheckbox.checked });
+
+    // Save preference when "Enable Tabs" checkbox changes
+    enableTabsCheckbox.addEventListener('change', () => {
+        chrome.storage.sync.set({ 'enableTabs': enableTabsCheckbox.checked });
+    });
+
+    // Save preference when "Use Large Font" checkbox changes
+    useLargeFontCheckbox.addEventListener('change', () => {
+        chrome.storage.sync.set({ 'useLargeFont': useLargeFontCheckbox.checked });
+    });
+
+    // Save preference when "Show Word Count" checkbox changes
+    showWordCountCheckbox.addEventListener('change', () => {
+        chrome.storage.sync.set({ 'showWordCount': showWordCountCheckbox.checked })
     });
 
     function renderPalette() {
@@ -60,7 +79,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     saveButton.addEventListener('click', () => {
         chrome.storage.sync.set({ textAreaBgColor: selectedColor }, () => {
-            statusDiv.textContent = 'Settings saved!';
+            statusDiv.textContent = 'Nice color! Settings saved!';
+
             setTimeout(() => { statusDiv.textContent = ''; }, 1500);
         });
     });
