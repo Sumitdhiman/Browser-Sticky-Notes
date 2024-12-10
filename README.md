@@ -1,4 +1,4 @@
-# Browser Sticky Notes version 2.0
+# Browser Sticky Notes version 2.3
 Browser Sticky Notes for Chromium browsers that opens a text area at the top right of the address bar, which is easy to use and lightweight. It is perfect utility for quick notes.
 
 ## Features
@@ -10,6 +10,7 @@ Browser Sticky Notes for Chromium browsers that opens a text area at the top rig
 - Change the Palette colours.
 - Change the Font size for better accessibility.
 - All customization toggles can be turned off depending on the user flow.
+- You can donate if you like.
 
 ## Installation
 
