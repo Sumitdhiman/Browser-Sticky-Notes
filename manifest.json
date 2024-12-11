@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "Browser Sticky Notes",
-  "version": "2.3",
-  "description": "Opens a Text Panel when clicked.",
+  "version": "2.3.1",
+  "description": "Opens a Sticky note on the Page when invoked using Shift+ALT+N.",
   "action": {
     "default_popup": "popup.html"
   },
@@ -21,9 +21,10 @@
   "commands": {
     "open_popup": {
       "suggested_key": {
-        "default": "Alt+N"
+        "default": "Shift+Alt+N"
       },
       "description": "Opens the popup"
     }
   }
+   
 }
