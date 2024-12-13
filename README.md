@@ -1,5 +1,9 @@
-# Browser Sticky Notes version 2.3
+# Browser Sticky Notes version 2.4
 Browser Sticky Notes for Chromium browsers that opens a text area at the top right of the address bar, which is easy to use and lightweight. It is perfect utility for quick notes.
+
+## What is new
+- Added support for Renaming the files.
+- Fixed the Options.html page for reliablity.
 
 ## Features
 
