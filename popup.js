@@ -19,109 +19,92 @@ document.addEventListener('DOMContentLoaded', () => {
         'showExportButton': false,
         'enableTabs': true,
         'showWordCount': true,
-        'useLargeFont': false, // Add useLargeFont preference
+        'useLargeFont': false,
+        'note1Name': 'Note 1',
+        'note2Name': 'Note 2',
+        'note3Name': 'Note 3'
     }, (items) => {
         textArea.style.backgroundColor = items.textAreaBgColor;
         exportButton.style.display = items.showExportButton ? 'block' : 'none';
-    
+        enableTabs = items.enableTabs;
         if (items.showWordCount) {
             wordCount.style.display = 'block';
             updateWordCount();
         } else {
             wordCount.style.display = 'none';
         }
-    
+
         // Set font size based on preference
         if (items.useLargeFont) {
             textArea.style.fontSize = '18px'; // Or your preferred large font size
         } else {
             textArea.style.fontSize = '14px'; // Your default font size
         }
-    
-        enableTabs = items.enableTabs;
-    
+
         if (enableTabs) {
-            // Show tabs and enable multi-note functionality
             tabContainer.style.display = 'flex';
+            // Update tab names
+            tabButtons.forEach(button => {
+                const noteId = button.getAttribute('data-note');
+                button.textContent = items[`${noteId}Name`] || `Note ${noteId.slice(-1)}`;
+            });
             setupTabs();
         } else {
-            // Hide tabs and use single note
             tabContainer.style.display = 'none';
-            currentNote = 'singleNote'; // Use a distinct identifier
+            currentNote = 'singleNote';
             loadSingleNoteContent();
-            // Remove event listeners from tabs to prevent unexpected behavior
             tabButtons.forEach(button => {
                 button.removeEventListener('click', handleTabClick);
             });
         }
     });
 
-    // Function to handle tab clicks
+    // Handle tab clicks
     function handleTabClick(event) {
         const button = event.currentTarget;
-        // Save current note content
         saveCurrentNoteContent();
-
-        // Update active tab
         tabButtons.forEach(btn => btn.classList.remove('active'));
         button.classList.add('active');
-
-        // Update current note
         currentNote = button.getAttribute('data-note');
-
-        // Load note content
         loadCurrentNoteContent();
     }
 
-    // Function to setup tabs
+    // Setup tabs
     function setupTabs() {
         tabButtons.forEach(button => {
             button.addEventListener('click', handleTabClick);
         });
-        // Initialize by loading content for the default note
         loadCurrentNoteContent();
     }
 
-    // Load content for the current note when tabs are enabled
+    // Load content for the current note
     function loadCurrentNoteContent() {
         const key = `textAreaContent_${currentNote}`;
         chrome.storage.sync.get([key], (result) => {
-            const savedContent = result[key] || "";
-            textArea.value = savedContent;
+            textArea.value = result[key] || '';
             updateWordCount();
         });
     }
 
-    // Save content for the current note when tabs are enabled
+    // Save content for the current note
     function saveCurrentNoteContent() {
         const key = `textAreaContent_${currentNote}`;
-        const content = textArea.value;
-        chrome.storage.sync.set({ [key]: content }, () => {
-            if (chrome.runtime.lastError) {
-                console.error('Error saving note content:', chrome.runtime.lastError);
-            }
-        });
+        chrome.storage.sync.set({ [key]: textArea.value });
     }
 
-    // Load content for the single note when tabs are disabled
+    // Load content for the single note
     function loadSingleNoteContent() {
         const key = 'textAreaContent';
         chrome.storage.sync.get([key], (result) => {
-            const savedContent = result[key] || "";
-            textArea.value = savedContent;
+            textArea.value = result[key] || '';
             updateWordCount();
         });
     }
 
-    // Save content for the single note when tabs are disabled
+    // Save content for the single note
     function saveSingleNoteContent() {
         const key = 'textAreaContent';
-        const content = textArea.value;
-        chrome.storage.sync.set({ [key]: content }, () => {
-            if (chrome.runtime.lastError) {
-                console.error('Error saving single note content:', chrome.runtime.lastError);
-            }
-        });
+        chrome.storage.sync.set({ [key]: textArea.value });
     }
 
     // Save content on input
@@ -134,7 +117,6 @@ document.addEventListener('DOMContentLoaded', () => {
         updateWordCount();
     });
 
-    
     // Export Button Click
     exportButton.addEventListener('click', () => {
         const text = textArea.value;
@@ -156,9 +138,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Word Count Function
     function updateWordCount() {
-        if (wordCount.style.display === 'none') return; // Do not update if hidden
+        if (wordCount.style.display === 'none') return;
         const text = textArea.value.trim();
         const words = text ? text.split(/\s+/).length : 0;
         wordCount.textContent = `Words: ${words}`;
     }
+
+    // Listen for messages from the options page to update tab names
+    chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+        if (request.action === 'updateTabNames') {
+            tabButtons.forEach(button => {
+                const noteId = button.getAttribute('data-note');
+                button.textContent = request[`${noteId}Name`] || `Note ${noteId.slice(-1)}`;
+            });
+        }
+    });
 });
