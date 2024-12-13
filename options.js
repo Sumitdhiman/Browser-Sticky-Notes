@@ -3,9 +3,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const saveButton = document.getElementById('saveButton');
     const statusDiv = document.getElementById('status');
     const showExportCheckbox = document.getElementById('showExport');
-    const enableTabsCheckbox = document.getElementById('enableTabs'); // Checkbox for Tabs
+    const enableTabsCheckbox = document.getElementById('enableTabs');
     const useLargeFontCheckbox = document.getElementById('useLargeFont');
-    const showWordCountCheckbox = document.getElementById('showWordCount'); // Checkbox for Word Count
+    const showWordCountCheckbox = document.getElementById('showWordCount');
+
+    // Rename notes
+    const note1NameInput = document.getElementById('note1Name');
+    const note2NameInput = document.getElementById('note2Name');
+    const note3NameInput = document.getElementById('note3Name');
+    const renameButton = document.getElementById('renameButton');
+    const renameStatusDiv = document.getElementById('renameStatus');
 
     const pastelColors = [
         '#FFE4E1', '#F0FFF0', '#F0F8FF', '#F5F5DC', '#FFF0F5',
@@ -18,16 +25,22 @@ document.addEventListener('DOMContentLoaded', () => {
     // Load saved preferences
     chrome.storage.sync.get({
         'showExportButton': false,
-        'enableTabs': true, // Default is true
-        'textAreaBgColor': selectedColor, // Default color
+        'enableTabs': true,
+        'textAreaBgColor': selectedColor,
         'useLargeFont': false,
-        'showWordCount': true // Default is true
+        'showWordCount': true,
+        'note1Name': 'Note 1',
+        'note2Name': 'Note 2',
+        'note3Name': 'Note 3'
     }, (items) => {
         showExportCheckbox.checked = items.showExportButton;
         enableTabsCheckbox.checked = items.enableTabs;
         useLargeFontCheckbox.checked = items.useLargeFont;
-        showWordCountCheckbox.checked = items.showWordCount; // Load Word Count preference
+        showWordCountCheckbox.checked = items.showWordCount;
         selectedColor = items.textAreaBgColor || selectedColor;
+        note1NameInput.value = items.note1Name;
+        note2NameInput.value = items.note2Name;
+        note3NameInput.value = items.note3Name;
         renderPalette();
     });
 
@@ -78,4 +91,32 @@ document.addEventListener('DOMContentLoaded', () => {
             setTimeout(() => { statusDiv.textContent = ''; }, 1500);
         });
     });
+
+    // Rename Notes Logic
+    renameButton.addEventListener('click', () => {
+        const note1Name = note1NameInput.value.trim() || 'Note 1';
+        const note2Name = note2NameInput.value.trim() || 'Note 2';
+        const note3Name = note3NameInput.value.trim() || 'Note 3';
+
+        chrome.storage.sync.set({
+            'note1Name': note1Name,
+            'note2Name': note2Name,
+            'note3Name': note3Name
+        }, () => {
+            renameStatusDiv.textContent = 'Note names updated!';
+            setTimeout(() => { renameStatusDiv.textContent = ''; }, 1500);
+            // Update tab names in the popup if it's open
+            updateTabNamesInPopup();
+        });
+    });
+
+    // Function to update tab names in the popup
+    function updateTabNamesInPopup() {
+        chrome.runtime.sendMessage({
+            action: 'updateTabNames',
+            note1Name: note1NameInput.value.trim() || 'Note 1',
+            note2Name: note2NameInput.value.trim() || 'Note 2',
+            note3Name: note3NameInput.value.trim() || 'Note 3'
+        });
+    }
 });
