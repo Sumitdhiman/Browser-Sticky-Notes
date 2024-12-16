@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <title>Browser Sticky Notes</title>
     <link rel="stylesheet" href="styles.css">
 </head>
-<body>
+<body class="popup-body" data-theme="light">
     <div class="header">
         <h1 class="title">Browser Sticky Notes</h1>
         <img src="gear.png" id="settingsIcon" title="Settings">
@@ -12,9 +12,9 @@
 
     <!-- Tab Navigation -->
     <div class="tab-container">
-        <button class="tab-button active" data-note="note1">Note 1</button>
-        <button class="tab-button" data-note="note2">Note 2</button>
-        <button class="tab-button" data-note="note3">Note 3</button>
+        <button class="tab-button active" data-note="note1">Note 1 <span class="pin-button" data-note="note1" title="Pin Note">📌</span></button>
+        <button class="tab-button" data-note="note2">Note 2 <span class="pin-button" data-note="note2" title="Pin Note">📌</span></button>
+        <button class="tab-button" data-note="note3">Note 3 <span class="pin-button" data-note="note3" title="Pin Note">📌</span></button>
     </div>
 
     <!-- Note Content -->

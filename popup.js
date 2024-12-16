@@ -5,6 +5,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const wordCount = document.getElementById('wordCount');
     const tabContainer = document.querySelector('.tab-container');
     const tabButtons = document.querySelectorAll('.tab-button');
+    const popupBody = document.querySelector('.popup-body');
+    const body = document.body; // Get the body element
 
     let currentNote = 'note1'; // Default note
     let enableTabs = true; // Default to true
@@ -22,7 +24,9 @@ document.addEventListener('DOMContentLoaded', () => {
         'useLargeFont': false,
         'note1Name': 'Note 1',
         'note2Name': 'Note 2',
-        'note3Name': 'Note 3'
+        'note3Name': 'Note 3',
+        'backgroundColor': '#FFFFFF', // Default background color
+        'darkMode': false // Load dark mode preference
     }, (items) => {
         textArea.style.backgroundColor = items.textAreaBgColor;
         exportButton.style.display = items.showExportButton ? 'block' : 'none';
@@ -56,6 +60,15 @@ document.addEventListener('DOMContentLoaded', () => {
             tabButtons.forEach(button => {
                 button.removeEventListener('click', handleTabClick);
             });
+        }
+        popupBody.style.backgroundColor = items.backgroundColor; // Set background color
+
+        // Apply dark mode class
+        body.dataset.theme = items.darkMode ? 'dark' : 'light';
+
+        // Set background color based on dark mode
+        if (items.darkMode) {
+            popupBody.style.backgroundColor = '#444'; // Set dark mode background color
         }
     });
 
@@ -151,6 +164,24 @@ document.addEventListener('DOMContentLoaded', () => {
                 const noteId = button.getAttribute('data-note');
                 button.textContent = request[`${noteId}Name`] || `Note ${noteId.slice(-1)}`;
             });
+        }
+        if (request.action === 'addTextToNewNote') {
+            textArea.value = request.selectedText;
+            if (enableTabs) {
+                saveCurrentNoteContent();
+            } else {
+                saveSingleNoteContent();
+            }
+            updateWordCount();
+        }
+        if (request.action === 'addTextToSingleNote') {
+            textArea.value = request.selectedText;
+            if (enableTabs) {
+                saveCurrentNoteContent();
+            } else {
+                saveSingleNoteContent();
+            }
+            updateWordCount();
         }
     });
 });
