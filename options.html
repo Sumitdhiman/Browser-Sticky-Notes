@@ -4,7 +4,7 @@
     <title>Customize Browser Sticky Notes</title>
     <link rel="stylesheet" href="styles.css">
 </head>
-<body class="bodyoptns">
+<body class="bodyoptns" data-theme="light">
     <div class="options-grid">
         <div class="first-column">
             <h2>Choose Note Color</h2>
@@ -14,75 +14,92 @@
                 <div id="status"></div>
             </div>
         </div>
-
         <div class="second-column">
-            <div class="sidebar">
-                <h2>Customize Browser Sticky Notes</h2>
-                <div class="option-row">
-                    <label for="enableTabs" class="optionlabel">Enable Multiple Notes (Tabs):</label>
-                    <input type="checkbox" id="enableTabs">
-                </div>
-                <div class="option-row">
-                    <div class="checkbox-wrapper">
-                        <label for="showExport" class="optionlabel">Show Export Button:</label>
-                        <input type="checkbox" id="showExport">
-                    </div>
-                </div>
-                <div class="option-row">
-                    <div class="checkbox-wrapper">
-                        <label for="useLargeFont" class="optionlabel">Use Large Font:</label>
-                        <input type="checkbox" id="useLargeFont">
-                    </div>
-                </div>
-                <div class="option-row">
-                    <div class="checkbox-wrapper">
-                        <label for="showWordCount" class="optionlabel">Show Word Count:</label>
-                        <input type="checkbox" id="showWordCount">
-                    </div>
-                </div>
-            
-                <!-- Footer Links -->
-                <div id="footer">
-                    <p>Questions/Bug/Ideas? Report it at <a href="https://github.com/Sumitdhiman/Browser-Sticky-Notes/issues" style="color: #4CAF50; text-decoration: none;">Github.</a></p>
-                    <p>Designed with &hearts; by <a href="https://yourwindowsguide.com" style="color: #4CAF50; text-decoration: none;">Your Windows Guide</a></p>
-                </div>
+            <h2>Choose Background Color</h2>
+            <div class="containerPallete palette-container">
+                <div id="backgroundColorPalette"></div>
+                <button id="saveBackgroundButton">Save</button>
             </div>
         </div>
-
         <div class="third-column">
+            <h2>Customize Browser Sticky Notes</h2>
+            <div class="sidebar">
+                <div class="option-row">
+                    <label for="enableTabs" class="optionlabel">Enable Multiple Notes (Tabs):</label>
+                    <label class="switch">
+                        <input type="checkbox" id="enableTabs">
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+                <div class="option-row">
+                    <label for="showExport" class="optionlabel">Show Export Button:</label>
+                    <label class="switch">
+                        <input type="checkbox" id="showExport">
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+                <div class="option-row">
+                    <label for="useLargeFont" class="optionlabel">Use Large Font:</label>
+                    <label class="switch">
+                        <input type="checkbox" id="useLargeFont">
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+                <div class="option-row">
+                    <label for="showWordCount" class="optionlabel">Show Word Count:</label>
+                    <label class="switch">
+                        <input type="checkbox" id="showWordCount">
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+                <div class="option-row">
+                    <label for="darkModeToggle" class="optionlabel">Dark Mode:</label>
+                    <label class="switch">
+                        <input type="checkbox" id="darkModeToggle">
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+            </div>
+            <p id="darkModeMessage" style="display: none; color: #ff9800; margin-top: 4px; text-align: center;">
+                <br>Note: Background color is overridden by dark mode.
+        </div>
+        <div class="fourth-column">
+            <h2>Rename Notes</h2>
             <div class="container ">
-                <h2>Rename Notes</h2>
                 <div class="rename-note-container">
-                    <label for="note1Name">Note 1:</label>
+                    <label id="labelnote" for="note1Name">Note 1:</label>
                     <input type="text" id="note1Name" class="rename-note-input">
                 </div>
                 <div class="rename-note-container">
-                    <label for="note2Name">Note 2:</label>
+                    <label id="labelnote" for="note2Name">Note 2:</label>
                     <input type="text" id="note2Name" class="rename-note-input">
                 </div>
                 <div class="rename-note-container">
-                    <label for="note3Name">Note 3:</label>
+                    <label id="labelnote" for="note3Name">Note 3:</label>
                     <input type="text" id="note3Name" class="rename-note-input">
                 </div>
                 <button id="renameButton">Rename</button>
                 <div id="renameStatus"></div>
             </div>
         </div>
-
-        <div class="fourth-column">
-            <div class="shortcut-info">
-                <h2>Keyboard Shortcut</h2>
-                <p>Use <strong>Shift+ Alt + N</strong> to open the sticky notes popup.</p>
-                <p>You can customize this shortcut in your browser's extension settings.</p>
-                <br>
-            </div>
-            <div class="bmc-button">  <!-- Buy Me a Coffee button container -->
-                <a href="https://www.buymeacoffee.com/yourwindowsguide" target="_blank">
-                    <img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee">
-                </a>
-                <h2>Support us!</h2>
-            </div>
+    </div>
+    <div class="secondrow">
+    <div id="footer1"> 
+        <h2>Keyboard Shortcut</h2>
+        <p>Use <strong>Shift+ Alt + N</strong> to open the sticky notes popup.</p>
+        <p>You can customize this shortcut in your browser's extension settings.</p>
+    </div>
+    <h2>Support us!</h2>
+    <div class="bmc-button">  <!-- Buy Me a Coffee button container -->
+        <a href="https://www.buymeacoffee.com/yourwindowsguide" target="_blank">
+            <img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee">
+        </a>
+        <div id="footer">
+            <p>Questions/Bug/Ideas? Report it at <a href="https://github.com/Sumitdhiman/Browser-Sticky-Notes/issues" style="color: #4CAF50; text-decoration: none;">Github.</a></p>
+            <p>Designed with &hearts; by <a href="https://yourwindowsguide.com" style="color: #4CAF50; text-decoration: none;">Your Windows Guide</a></p>
+            <p id="versionDisplay" style="text-align: center; margin-top: 10px; font-size: 12px; color: #666;"></p>
         </div>
+    </div>
     </div>
     <script src="options.js"></script>
 </body>
