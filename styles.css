@@ -1,6 +1,6 @@
 /* General Styles */
 body {
-    overflow: hidden;
+   
     font-family: Arial, sans-serif;
     margin: 10px;
     width: 300px;
@@ -9,7 +9,11 @@ body {
 }
 
 .popup-body {
-    background-color: #FFFFFF;
+    min-height: 100px !important;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    flex-direction: column;
 }
 
 .bodyoptns {
@@ -24,7 +28,7 @@ body {
 
 textarea {
     width: 100%;
-    height: 150px;
+    min-height: 10em !important ;
     resize: none;
     font-size: 14px;
     padding: 10px;
@@ -291,8 +295,6 @@ button#saveBackgroundButton:hover {
     /* Use flexbox for consistent layout */
     display: flex;
     flex-direction: column;
-    align-items: center;
-    /* Center content horizontally */
 }
 
 .first-column {
@@ -382,7 +384,6 @@ button#saveBackgroundButton:hover {
 
 body[data-theme="dark"] {
     background-color: #333;
-    color: #fff;
 }
 
 body[data-theme="dark"] .popup-body {
@@ -391,7 +392,7 @@ body[data-theme="dark"] .popup-body {
 
 body[data-theme="dark"] .bodyoptns {
     background-color: #444;
-    color: #fff;
+    color: #fff !important;
 }
 
 body[data-theme="dark"] h2 {
@@ -413,6 +414,7 @@ body[data-theme="dark"] .third-column,
 body[data-theme="dark"] .fourth-column,
 body[data-theme="dark"] .secondrow {
     background-color: #555;
+    color:#fff !important ;
     box-shadow: 0 2px 4px rgba(255, 255, 255, 0.1);
 }
 
@@ -521,4 +523,82 @@ input:checked + .slider:before {
 
 .slider.round:before {
     border-radius: 50%;
+}
+
+.styling-buttons {
+    margin-top: 5px;
+    margin-bottom: 5px;
+    text-align: center;
+}
+
+.styling-buttons button {
+    margin: 0 2px;
+    border: none;
+    border-radius: 5px;
+    padding: 5px 10px;
+    cursor: pointer;
+    background-color: #4CAF50
+}
+
+body[data-theme="dark"] .styling-buttons button {
+    background-color: #666; 
+    color:#000 !important
+}
+
+.styling-buttons button:hover {
+    background-color: #ddd; /* Slightly darker on hover */
+}
+
+body[data-theme="dark"] .styling-buttons button:hover {
+    background-color: #777; /* Slightly darker on hover in dark mode */
+}
+
+.styling-buttons button:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px #ffffff; /* Green outline on focus */
+}
+
+.styling-buttons button.active {
+    background-color: #4CAF50; /* Active button color - Green */
+    color: white; /* White text for contrast */
+}
+
+#noteContent[contenteditable="true"]:focus {
+    outline: none;
+}
+
+
+body[data-theme="dark"] .styling-buttons button.active {
+    background-color: #81C784; /* Dark mode active button color */
+    color: #000; /* Black text for contrast in dark mode */
+}
+
+#noteContent
+{  /* Keep the minimum height */
+    box-sizing: border-box;
+    padding: 10px;
+    flex-grow: 1; /* Add this line */
+    overflow-y: auto; 
+    height: calc(100% - 100px);
+    position: relative;
+    margin-bottom: 15px; 
+   
+}
+
+#resizeHandle {
+    position: absolute;
+    bottom: 0;
+    left: 0; /* Changed from right: 0; */
+    width: 0;
+    height: 0;
+    border-bottom: 15px solid #666; /* Adjust size and color as needed */
+    border-right: 15px solid transparent; /* Changed from border-left */
+    cursor: sw-resize; /* Changed the cursor */
+    margin-left:-2.5%;
+    margin-bottom: -2.7%;
+
+}
+
+body[data-theme="dark"] #resizeHandle {
+    border-bottom-color: #ddd; /* Adjust color for dark mode */
 }
