@@ -12,6 +12,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const darkModeToggle = document.getElementById('darkModeToggle');
     const body = document.body;
     const darkModeMessage = document.getElementById('darkModeMessage');
+    const showStylingButtonsCheckbox = document.getElementById('showStylingButtons');
+
 
     // Rename notes elements
     const note1NameInput = document.getElementById('note1Name');
@@ -183,4 +185,14 @@ document.addEventListener('DOMContentLoaded', () => {
         darkModeMessage.style.display = darkModeToggle.checked ? 'block' : 'none';
     }
     
+    chrome.storage.sync.get({
+        'showStylingButtons': true // Default to true if not set
+    }, (items) => {
+        showStylingButtonsCheckbox.checked = items.showStylingButtons;
+    });
+    
+    // Save preference on change
+    showStylingButtonsCheckbox.addEventListener('change', () => {
+        chrome.storage.sync.set({ 'showStylingButtons': showStylingButtonsCheckbox.checked });
+    });
 });
