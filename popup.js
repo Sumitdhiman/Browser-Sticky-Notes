@@ -16,13 +16,21 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentNote = 'note1';
     let enableTabs = true;
 
+    setTimeout(() => {
+        popupBody.classList.add('popup-open');
+    }, 100);
+    
     settingsIcon.addEventListener('click', () => {
         chrome.runtime.openOptionsPage();
     });
     
+    console.log('DOMContentLoaded event fired'); // Check if the event is firing
+    document.body.classList.add('popup-open');
+    console.log('popup-open class added'); // Check if the class is added
+
     // Load settings from storage
     chrome.storage.sync.get({
-        'textAreaBgColor': '#F2FFFF',
+        'textAreaBgColor': '#F0FFFF',
         'showExportButton': false,
         'enableTabs': true,
         'showWordCount': true,
@@ -30,7 +38,7 @@ document.addEventListener('DOMContentLoaded', () => {
         'note1Name': 'Note 1',
         'note2Name': 'Note 2',
         'note3Name': 'Note 3',
-        'backgroundColor': '#FFFFFF',
+        'backgroundColor': '#FFF0F5',
         'darkMode': false,
         'lastActiveTab': 'note1',
         'showStylingButtons': true // Load last active tab
