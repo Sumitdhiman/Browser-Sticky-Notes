@@ -188,6 +188,14 @@ textarea {
     box-sizing: border-box;
 }
 
+p{
+    text-align: left;
+}
+
+a{
+    color: #4CAF50;
+    text-decoration: none;
+}
 .action-button:hover {
     background-color: #45A049;
 }
@@ -667,4 +675,79 @@ body[data-theme="dark"] .styling-buttons button.active {
 
 body[data-theme="dark"] #resizeHandle {
     border-bottom-color: #ddd; /* Adjust color for dark mode */
+}
+
+/* Add these styles */
+#renameTabsBtn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 5px;
+    font-size: 16px;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+}
+
+#renameTabsBtn:hover {
+    opacity: 1;
+}
+
+.rename-dialog {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    z-index: 1000;
+}
+
+body[data-theme="dark"] .rename-dialog {
+    background: #444;
+    color: white;
+}
+
+.rename-inputs {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.rename-inputs input {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+body[data-theme="dark"] .rename-inputs input {
+    background: #666;
+    color: white;
+    border-color: #555;
+}
+
+.rename-buttons {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.rename-buttons button {
+    flex: 1;
+    padding: 8px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    background: #4CAF50;
+    color: white;
+}
+
+.rename-buttons button:last-child {
+    background: #666;
+}
+
+.rename-buttons button:hover {
+    opacity: 0.9;
 }
