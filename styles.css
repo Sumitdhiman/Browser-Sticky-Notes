@@ -114,7 +114,7 @@ textarea {
     margin-left: 15%;
 }
 
-.donate
+.donate, .othbrowsers, .moresettings
 {
     padding: 20px;
     background-color: white;
@@ -123,6 +123,14 @@ textarea {
     display: flex;
     flex-direction: column;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+#moresetting
+
+{
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+    border-radius: 8px;
+    padding: 20px;
 }
 
 
@@ -485,7 +493,10 @@ body[data-theme="dark"] .notecolor,
 body[data-theme="dark"] .settings,
 body[data-theme="dark"] .renamenotes,
 body[data-theme="dark"] .info,
-body[data-theme="dark"] .donate
+body[data-theme="dark"] .donate,
+body[data-theme="dark"] .moresettings,
+body[data-theme="dark"] .othbrowsers
+
 {
     background-color: #555;
     color:#fff !important ;
@@ -662,7 +673,7 @@ body[data-theme="dark"] .styling-buttons button.active {
     position: relative;
     margin-bottom: 15px;
     transition: background-color 0.3s ease, height 0.3s ease;
-
+    white-space: pre-wrap;
 }
 
 #noteContent:focus {
