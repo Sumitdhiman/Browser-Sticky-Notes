@@ -9,6 +9,7 @@ A lightweight browser extension for creating and managing digital sticky notes d
 - Save notes locally
 - Easy drag-and-drop functionality
 - Keyboard shortcuts for quick access
+- Add Content via Context menu
 
 ## Installation
 
