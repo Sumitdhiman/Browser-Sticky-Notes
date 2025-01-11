@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const body = document.body;
     const darkModeMessage = document.getElementById('darkModeMessage');
     const showStylingButtonsCheckbox = document.getElementById('showStylingButtons');
-
+    const notifyWhenContextAddCheckbox = document.getElementById('notifywhencontextadd');
 
     // Rename notes elements
     const note1NameInput = document.getElementById('note1Name');
@@ -195,4 +195,16 @@ document.addEventListener('DOMContentLoaded', () => {
     showStylingButtonsCheckbox.addEventListener('change', () => {
         chrome.storage.sync.set({ 'showStylingButtons': showStylingButtonsCheckbox.checked });
     });
+
+    chrome.storage.sync.get({
+        'notifywhencontextadd': true // Default to true if not set
+    }, (items) => {
+        notifyWhenContextAddCheckbox.checked = items.notifywhencontextadd;
+    });
+    
+    // Save preference on change
+    notifyWhenContextAddCheckbox.addEventListener('change', () => {
+        chrome.storage.sync.set({ 'notifywhencontextadd': notifyWhenContextAddCheckbox.checked });
+    });
 });
+

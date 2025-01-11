@@ -1,6 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
     const settingsIcon = document.getElementById('settingsIcon');
-    const noteContent = document.getElementById('noteContent');
     const exportButton = document.getElementById('exportButton');
     const wordCount = document.getElementById('wordCount');
     const tabContainer = document.querySelector('.tab-container');
@@ -12,6 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const underlineButton = document.getElementById('underlineButton');
     const resizeHandle = document.getElementById('resizeHandle');
     const stylingButtonsContainer = document.querySelector('.styling-buttons');
+    const noteContent = document.getElementById('noteContent'); // Get your note content are
 
     let currentNote = 'note1';
     let enableTabs = true;
@@ -113,9 +113,9 @@ document.addEventListener('DOMContentLoaded', () => {
     function loadCurrentNoteContent() {
         const key = `textAreaContent_${currentNote}`;
         chrome.storage.sync.get([key], (result) => {
-            noteContent.innerHTML = result[key] || ''; // Use innerHTML to preserve formatting
+            // Replace newline characters with <br> tags for HTML rendering
+            noteContent.innerHTML = (result[key] || '').replace(/\n/g, '<br>');
             updateWordCount();
-            updateButtonStates();
         });
     }
 
@@ -129,7 +129,8 @@ document.addEventListener('DOMContentLoaded', () => {
     function loadSingleNoteContent() {
         const key = 'textAreaContent';
         chrome.storage.sync.get([key], (result) => {
-            noteContent.innerHTML = result[key] || ''; // Use innerHTML
+            // Replace newline characters with <br> tags for HTML rendering
+            noteContent.innerHTML = (result[key] || '').replace(/\n/g, '<br>');
             updateWordCount();
         });
     }
@@ -176,7 +177,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const words = text ? text.split(/\s+/).length : 0;
         wordCount.textContent = `Words: ${words}`;
     }
-
     function setActiveTabButton() {
         tabButtons.forEach(btn => btn.classList.remove('active'));
         const activeTabButton = document.querySelector(`.tab-button[data-note="${currentNote}"]`);
@@ -187,15 +187,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Listen for messages to update tab names or add text to notes
     chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-        if (request.action === 'updateTabNames') {
-            tabButtons.forEach(button => {
-                const noteId = button.getAttribute('data-note');
-                button.textContent = request[`${noteId}Name`] || `Note ${noteId.slice(-1)}`;
-            });
-        } else if (request.action === 'addTextToNote') {
+        if (request.action === 'addTextToNote') {
             // Ensure the note content is updated with any existing content before appending
             const noteId = request.noteId;
-            const key = `textAreaContent_${noteId}`;
+            const key = noteId === 'singleNote' ? 'textAreaContent' : `textAreaContent_${noteId}`;
             chrome.storage.sync.get([key], (result) => {
                 const existingContent = result[key] || '';
                 const newContent = existingContent + request.selectedText;
@@ -288,4 +283,14 @@ document.addEventListener('DOMContentLoaded', () => {
     noteContent.addEventListener('keyup', updateButtonStates); // For keyboard shortcuts
     noteContent.addEventListener('mouseup', updateButtonStates);
 
+    chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+        if (request.action === 'addTextToNote') {
+            // Only update if we're on the correct note tab
+            if (currentNote === request.noteId) {
+                // Append the new text to the note content
+                noteContent.innerHTML += request.selectedText;
+                updateWordCount(); // Update word count if it's enabled
+            }
+        }
+    });
 });
