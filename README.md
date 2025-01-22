@@ -31,9 +31,11 @@ This project is built using:
 - Browser Extension APIs
 
 ##  Download
--Chrome Store: https://chromewebstore.google.com/detail/browser-sticky-notes/lejgfjllojjoapngaodklohhdpobdhpj?authuser=1&hl=en
--Firefox: https://addons.mozilla.org/en-US/firefox/addon/browser-sticky-notes/?utm_source=addons.mozilla.org&utm_medium=referral&utm_content=search
--Edge: https://microsoftedge.microsoft.com/addons/detail/browser-sticky-notes/emjcicclabeldaencoolngcpglcbdkjj
+-Chrome Store: https://chromewebstore.google.com/detail/browser-sticky-notes/lejgfjllojjoapngaodklohhdpobdhpj
+
+-Firefox: https://addons.mozilla.org/en-US/firefox/addon/browser-sticky-notes/
+
+-Edge: https://microsoftedge.microsoft.com/addons/detail/browser-sticky-notes/
 ## Contributing
 
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
