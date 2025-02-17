@@ -12,6 +12,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const resizeHandle = document.getElementById('resizeHandle');
     const stylingButtonsContainer = document.querySelector('.styling-buttons');
     const noteContent = document.getElementById('noteContent'); // Get your note content are
+    const insertDateButton = document.getElementById('insertDateButton');
+    const toggleTableMode = document.getElementById('toggleTableMode');
+    const spreadsheetContainer = document.getElementById('spreadsheetContainer');
+    const modeToggle = document.getElementById('modeToggle');
+
 
     let currentNote = 'note1';
     let enableTabs = true;
@@ -23,10 +28,8 @@ document.addEventListener('DOMContentLoaded', () => {
     settingsIcon.addEventListener('click', () => {
         chrome.runtime.openOptionsPage();
     });
-    
-    console.log('DOMContentLoaded event fired'); // Check if the event is firing
+
     document.body.classList.add('popup-open');
-    console.log('popup-open class added'); // Check if the class is added
 
     // Load settings from storage
     chrome.storage.sync.get({
@@ -41,7 +44,9 @@ document.addEventListener('DOMContentLoaded', () => {
         'backgroundColor': '#FFF0F5',
         'darkMode': false,
         'lastActiveTab': 'note1',
-        'showStylingButtons': true // Load last active tab
+        'showStylingButtons': true,
+        'tableMode': false,
+        'hideTableModeToggle': false 
     }, (items) => {
         noteContent.style.backgroundColor = items.textAreaBgColor;
         stylingButtonsContainer.style.display = items.showStylingButtons ? 'block' : 'none';
@@ -54,12 +59,9 @@ document.addEventListener('DOMContentLoaded', () => {
             wordCount.style.display = 'none';
         }
 
-        if (items.useLargeFont) {
-            noteContent.style.fontSize = '18px';
-        } else {
-            noteContent.style.fontSize = '14px';
-        }
+        noteContent.style.fontSize = items.useLargeFont ? '18px' : '14px';
 
+        // Setup multi-note or single-note based on enableTabs
         if (enableTabs) {
             tabContainer.style.display = 'flex';
             tabButtons.forEach(button => {
@@ -78,15 +80,57 @@ document.addEventListener('DOMContentLoaded', () => {
                 button.removeEventListener('click', handleTabClick);
             });
         }
+
         popupBody.style.backgroundColor = items.backgroundColor;
-
         body.dataset.theme = items.darkMode ? 'dark' : 'light';
-
         if (items.darkMode) {
             popupBody.style.backgroundColor = '#444';
         }
 
-        
+        // Update table mode: if enabled, force-hide multi-note tabs
+        toggleTableMode.checked = items.tableMode;
+        if (items.tableMode) {
+            // Show table mode and hide text mode.
+            noteContent.style.display = 'none';
+            spreadsheetContainer.style.display = 'block';
+            // Hide the multi-note tabs regardless of enableTabs setting.
+            tabContainer.style.display = 'none';
+            // Disable the calendar icon.
+            insertDateButton.disabled = true;
+            insertDateButton.classList.add('disabled');
+
+            // Create a default table if none exists.
+            if (spreadsheetContainer.innerHTML.trim() === "") {
+                let table = document.createElement("table");
+                table.style.borderCollapse = "collapse";
+                table.style.width = "100%";
+                let tableHTML = "";
+                // Create 5 rows, 2 columns (empty cells)
+                for (let row = 1; row <= 5; row++) {
+                    tableHTML += `
+                        <tr>
+                            <td contenteditable="true" style="border: 1px solid #ccc; padding: 5px; background-color: white;min-height: 20px; height: 20px;"></td>
+                            <td contenteditable="true" style="border: 1px solid #ccc; padding: 5px; background-color: white;min-height: 20px; height: 20px;"></td>
+                        </tr>
+                    `;
+                }
+                table.innerHTML = tableHTML;
+                spreadsheetContainer.appendChild(table);
+            }
+        } else {
+            // Show text mode and hide table mode.
+            noteContent.style.display = 'block';
+            spreadsheetContainer.style.display = 'none';
+            // Show multi-note tabs only if enableTabs is true.
+            if (enableTabs) {
+                tabContainer.style.display = 'flex';
+            }
+            // Re-enable the calendar icon.
+            insertDateButton.disabled = false;
+            insertDateButton.classList.remove('disabled');
+        }
+        modeToggle.style.display = !items.hideTableModeToggle ? 'none' : 'flex';
+
     });
 
     // Handle tab clicks
@@ -153,15 +197,35 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Export Button Click
     exportButton.addEventListener('click', () => {
-        const text = noteContent.innerText; // Use innerText to get plain text
+        let text;
+        if (toggleTableMode.checked) {
+            // Handle table export
+            const table = spreadsheetContainer.querySelector('table');
+            if (table) {
+                const rows = Array.from(table.rows);
+                text = rows.map(row => {
+                    return Array.from(row.cells)
+                        .map(cell => cell.innerText.trim())
+                        .join('\t');
+                }).join('\n');
+            } else {
+                text = ''; // Empty if no table exists
+            }
+        } else {
+            // Handle regular note export
+            text = noteContent.innerText;
+        }
+
         const blob = new Blob([text], { type: 'text/plain' });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        if (enableTabs) {
+        if (toggleTableMode.checked) {
+            a.download = 'table.txt';
+        } else if (enableTabs) {
             a.download = `${currentNote}.txt`;
         } else {
-            a.download = `note.txt`;
+            a.download = 'note.txt';
         }
         a.style.display = 'none';
         document.body.appendChild(a);
@@ -208,6 +272,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+  
+
     boldButton.addEventListener('click', () => {
         noteContent.focus(); // Focus first
         document.execCommand('bold', false, null);
@@ -229,6 +295,54 @@ document.addEventListener('DOMContentLoaded', () => {
         updateButtonStates();
     });
 
+    function insertHtmlAtCursor(html) {
+        let sel, range;
+        if (window.getSelection) {
+            sel = window.getSelection();
+            if (sel.getRangeAt && sel.rangeCount) {
+                range = sel.getRangeAt(0);
+                range.deleteContents();
+                // Create a temporary container to hold the HTML
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = html;
+                const frag = document.createDocumentFragment();
+                let node, lastNode;
+                while ((node = tempDiv.firstChild)) {
+                    lastNode = frag.appendChild(node);
+                }
+                range.insertNode(frag);
+                // Move the cursor after the inserted content
+                if (lastNode) {
+                    range = range.cloneRange();
+                    range.setStartAfter(lastNode);
+                    range.collapse(true);
+                    sel.removeAllRanges();
+                    sel.addRange(range);
+                }
+            }
+        } else if (document.selection && document.selection.createRange) {
+            // For IE < 9
+            document.selection.createRange().pasteHTML(html);
+        }
+    }
+
+    insertDateButton.addEventListener('click', () => {
+        // Ensure the note content area is focused
+        noteContent.focus();
+        
+        // Get the current date in local format (without the time)
+        const today = new Date();
+        const dateValue = today.toLocaleDateString(); // e.g., "10/12/2023"
+        
+        // Prepare the HTML with a <br> tag for a new line
+        const htmlToInsert = dateValue + '<br>';
+        
+        // Insert the HTML at the current cursor position and reposition the caret
+        insertHtmlAtCursor(htmlToInsert);
+        
+        // Save the updated content
+        saveCurrentNoteContent();
+    });
 
     let isResizing = false;
     let startX, startY, startWidth, startHeight;
@@ -291,6 +405,111 @@ document.addEventListener('DOMContentLoaded', () => {
                 noteContent.innerHTML += request.selectedText;
                 updateWordCount(); // Update word count if it's enabled
             }
+        }
+    });
+
+    if (!toggleTableMode || !noteContent || !spreadsheetContainer) {
+        console.error("One or more required elements are missing. Please ensure that popup.html contains elements with ids: toggleTableMode, noteContent, and spreadsheetContainer.");
+        return;
+    }
+
+    // For debugging: log the initial state of the toggle.
+    console.log("Initial table mode:", toggleTableMode.checked);
+
+    chrome.storage.onChanged.addListener((changes) => {
+        if (changes.hideTableModeToggle) {
+            modeToggle.style.display = !changes.hideTableModeToggle.newValue ? 'none' : 'flex';
+        }
+    });
+
+    toggleTableMode.addEventListener('change', (e) => {
+        console.log("Table mode toggled:", e.target.checked);
+        
+        // Save the new table mode setting.
+        chrome.storage.sync.set({ 'tableMode': e.target.checked });
+
+        if (e.target.checked) {
+            // Enable table mode: hide text mode and show table mode.
+            noteContent.style.display = 'none';
+            spreadsheetContainer.style.display = 'block';
+            // Hide multi-note tabs regardless of settings.
+            tabContainer.style.display = 'none';
+            // Disable the calendar icon button.
+            insertDateButton.disabled = true;
+            insertDateButton.classList.add('disabled');
+
+            // Create a default table if none exists.
+            if (spreadsheetContainer.innerHTML.trim() === "") {
+                let table = document.createElement("table");
+                table.style.borderCollapse = "collapse";
+                table.style.width = "100%";
+                let tableHTML = "";
+                // Create 5 rows, 2 columns (empty cells)
+                for (let row = 1; row <= 5; row++) {
+                    tableHTML += `
+                        <tr>
+                            <td contenteditable="true" style="border: 1px solid #ccc; padding: 5px; background-color: white;min-height: 20px; height: 20px;"></td>
+                            <td contenteditable="true" style="border: 1px solid #ccc; padding: 5px; background-color: white;min-height: 20px; height: 20px;"></td>
+                        </tr>
+                    `;
+                }
+                table.innerHTML = tableHTML;
+                spreadsheetContainer.appendChild(table);
+                const cells = table.getElementsByTagName('td');
+                Array.from(cells).forEach(cell => {
+                    cell.style.lineHeight = '20px';
+                    cell.style.minHeight = '20px';
+                    cell.style.height = '20px';
+                });
+            }
+        } else {
+            // Disable table mode: show text mode and hide table mode.
+            noteContent.style.display = 'block';
+            spreadsheetContainer.style.display = 'none';
+            // Show multi-note tabs if multi-note mode is enabled.
+            if (enableTabs) {
+                tabContainer.style.display = 'flex';
+            }
+            // Re-enable the calendar icon.
+            insertDateButton.disabled = false;
+            insertDateButton.classList.remove('disabled');
+        }
+    });
+
+    // Listen for paste events in the spreadsheet container.
+    spreadsheetContainer.addEventListener('paste', (e) => {
+        console.log("Paste event detected in spreadsheet container.");
+        // Get plain text from the clipboard.
+        const clipboardText = e.clipboardData.getData('text/plain');
+        // Check if the pasted content has both tabs and newlines (typical for Excel data).
+        if (clipboardText.indexOf('\t') !== -1 && clipboardText.indexOf('\n') !== -1) {
+            e.preventDefault();  // Prevent the default paste behavior
+
+            console.log("Excel data detected in paste.");
+            const rows = clipboardText.split(/\r?\n/).filter(row => row.trim() !== "");
+            const newTable = document.createElement('table');
+            newTable.style.width = '100%';
+            newTable.style.borderCollapse = 'collapse';
+
+            rows.forEach((row, rowIndex) => {
+                const tr = document.createElement('tr');
+                const cells = row.split('\t');
+                cells.forEach(cellData => {
+                    // Use <th> for the first row (header), <td> for the subsequent rows.
+                    const cell = document.createElement(rowIndex === 0 ? 'th' : 'td');
+                    cell.innerText = cellData;
+                    cell.contentEditable = true;
+                    cell.style.border = '1px solid #ccc';
+                    cell.style.padding = '5px';
+                    cell.style.backgroundColor = 'white';  // Set cell background to white
+                    tr.appendChild(cell);
+                });
+                newTable.appendChild(tr);
+            });
+
+            // Replace the current content of the container with the new table created from Excel data.
+            spreadsheetContainer.innerHTML = "";
+            spreadsheetContainer.appendChild(newTable);
         }
     });
 });
