@@ -626,7 +626,12 @@ input:checked + .slider:before {
     background-color: #4CAF50;
     transform: translateY(0);
     transition: transform 0.2s ease, background-color 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 }
+
+
 
 body[data-theme="dark"] .styling-buttons button {
     background-color: #666; 
@@ -761,4 +766,31 @@ body[data-theme="dark"] .rename-inputs input {
 
 .rename-buttons button:hover {
     opacity: 0.9;
+}
+
+#modeToggle {
+    margin: 10px 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 5px;
+    border-radius: 5px;
+    height: 30px;
+}
+
+#modeToggle label {
+    font-size: 14px;
+    color: #555;
+}
+
+body[data-theme="dark"] #modeToggle {
+    background-color: rgba(102, 102, 102, 0.7);
+}
+
+body[data-theme="dark"] #modeToggle label {
+    color: #fff;
+}
+.styling-buttons button.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
 }
