@@ -6,7 +6,7 @@ A lightweight browser extension for creating and managing digital sticky notes d
 
 - Create and manage sticky notes in your browser
 - Customize note colors and appearance
-- Save notes locally
+- Convert the Note mode into Spreadhseet mode.
 - Easy drag-and-drop functionality
 - Keyboard shortcuts for quick access
 
