@@ -14,10 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const darkModeMessage = document.getElementById('darkModeMessage');
     const showStylingButtonsCheckbox = document.getElementById('showStylingButtons');
     const notifyWhenContextAddCheckbox = document.getElementById('notifywhencontextadd');
-    const enableTableModeCheckbox = document.getElementById('enableTableMode');
-    const hideTableModeToggleCheckbox = document.getElementById('hideTableModeToggle');
-
-    // Rename notes elements
+    const hideTableModeToggleCheckbox = document.getElementById('tableMode');
     const note1NameInput = document.getElementById('note1Name');
     const note2NameInput = document.getElementById('note2Name');
     const note3NameInput = document.getElementById('note3Name');
@@ -46,7 +43,7 @@ document.addEventListener('DOMContentLoaded', () => {
         'note2Name': 'Note 2',
         'note3Name': 'Note 3',
         'darkMode': false,
-        'hideTableModeToggle': false
+        'tableMode': false
     }, (items) => {
         showExportCheckbox.checked = items.showExportButton;
         enableTabsCheckbox.checked = items.enableTabs;
@@ -62,7 +59,7 @@ document.addEventListener('DOMContentLoaded', () => {
         applyTheme();
         renderPalettes();
         updateDarkModeMessage(); // Initial message update
-        hideTableModeToggleCheckbox.checked = items.hideTableModeToggle;
+        hideTableModeToggleCheckbox.checked = items.tableMode;
     });
 
     // Event listeners for checkboxes
@@ -213,8 +210,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Save setting whenever the checkbox value changes.
     hideTableModeToggleCheckbox.addEventListener('change', (e) => {
-        chrome.storage.sync.set({ 'hideTableModeToggle': e.target.checked });
+        chrome.storage.sync.set({ 'tableMode': e.target.checked });
     });
     
 });
-
