@@ -17,7 +17,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const spreadsheetContainer = document.getElementById('spreadsheetContainer');
     const modeToggle = document.getElementById('modeToggle');
 
-
     let currentNote = 'note1';
     let enableTabs = true;
 
@@ -33,7 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Load settings from storage
     chrome.storage.sync.get({
-        'textAreaBgColor': '#F0FFFF',
+        'textAreaBgColor': '#F0FFF0',
         'showExportButton': false,
         'enableTabs': true,
         'showWordCount': true,
@@ -49,7 +48,7 @@ document.addEventListener('DOMContentLoaded', () => {
         'hideTableModeToggle': false 
     }, (items) => {
         noteContent.style.backgroundColor = items.textAreaBgColor;
-        stylingButtonsContainer.style.display = items.showStylingButtons ? 'block' : 'none';
+        stylingButtonsContainer.style.display = items.showStylingButtons && !items.tableMode ? 'block' : 'none';
         exportButton.style.display = items.showExportButton ? 'block' : 'none';
         enableTabs = items.enableTabs;
         if (items.showWordCount) {
@@ -90,8 +89,10 @@ document.addEventListener('DOMContentLoaded', () => {
         // Update table mode based on the saved setting
         toggleTableMode.checked = items.tableMode;
         if (items.tableMode) {
+            console.log("Initializing in table mode");
             enableTableMode(noteContent, spreadsheetContainer, tabContainer, insertDateButton);
         } else {
+            console.log("Initializing in note mode");
             disableTableMode(noteContent, spreadsheetContainer, tabContainer, insertDateButton, enableTabs);
         }
         
@@ -234,6 +235,31 @@ document.addEventListener('DOMContentLoaded', () => {
                     updateWordCount();
                 });
             });
+        } else if (request.action === 'getTableContent') {
+            // Send the current table content from the spreadsheet container
+            sendResponse({ tableHTML: spreadsheetContainer.innerHTML });
+            return true; // Required for async response
+        } else if (request.action === 'updateTableContent') {
+            console.log("Received updated table content from table manager");
+            // Update the table content in the popup when changed in table manager
+            spreadsheetContainer.innerHTML = request.tableHTML;
+            
+            // Save the updated table content
+            // Get the current note ID from the active tab or use a default
+            let currentNote = 'note1';
+            const activeTab = document.querySelector('.tab-button.active');
+            if (activeTab) {
+                currentNote = activeTab.getAttribute('data-note');
+            }
+            
+            // Use a specific storage key for each note's table content
+            const storageKey = `tableContent_${currentNote}`;
+            
+            chrome.storage.local.set({
+                [storageKey]: request.tableHTML,
+                'tableContent': request.tableHTML // For backward compatibility
+            });
+            return true;
         }
     });
 
@@ -381,6 +407,24 @@ document.addEventListener('DOMContentLoaded', () => {
     // For debugging: log the initial state of the toggle.
     console.log("Initial table mode:", toggleTableMode.checked);
 
+    // Save table content when the popup is closing
+    window.addEventListener('beforeunload', () => {
+        if (toggleTableMode.checked) {
+            saveTableContent(spreadsheetContainer);
+        }
+    });
+
+    // Set up event delegation for table content changes
+    spreadsheetContainer.addEventListener('input', (e) => {
+        if (e.target.tagName === 'TD' || e.target.tagName === 'TH') {
+            // Debounce the save operation to avoid excessive saves
+            clearTimeout(spreadsheetContainer.saveTimeout);
+            spreadsheetContainer.saveTimeout = setTimeout(() => {
+                saveTableContent(spreadsheetContainer);
+            }, 500); // Save after 500ms of no input
+        }
+    });
+
     chrome.storage.onChanged.addListener((changes) => {
         if (changes.hideTableModeToggle) {
             modeToggle.style.display = !changes.hideTableModeToggle.newValue ? 'none' : 'flex';
@@ -394,18 +438,61 @@ document.addEventListener('DOMContentLoaded', () => {
     toggleTableMode.addEventListener('change', (e) => {
         console.log("Table mode toggled:", e.target.checked);
         
+        if (e.target.checked) {
+            // Save the current note content before switching to table mode
+            if (enableTabs) {
+                saveCurrentNoteContent();
+            } else {
+                saveSingleNoteContent();
+            }
+            
+            // Enable table mode
+            enableTableMode(noteContent, spreadsheetContainer, tabContainer, insertDateButton);
+            stylingButtonsContainer.style.display = 'none';
+            
+            // Create and show tooltip for table selection
+            let selectionTip = document.getElementById('tableSelectionTip');
+            if (!selectionTip) {
+                selectionTip = document.createElement('div');
+                selectionTip.id = 'tableSelectionTip';
+                selectionTip.style.fontSize = '11px';
+                selectionTip.style.color = '#666';
+                selectionTip.style.marginTop = '5px';
+                selectionTip.style.textAlign = 'center';
+                selectionTip.textContent = 'Shift+Click or Ctrl+Click to select multiple cells. Ctrl+C to copy selected cells.';
+                spreadsheetContainer.parentNode.insertBefore(selectionTip, spreadsheetContainer.nextSibling);
+            }
+            selectionTip.style.display = 'block';
+        } else {
+            // Disable table mode
+            disableTableMode(noteContent, spreadsheetContainer, tabContainer, insertDateButton, enableTabs);
+            
+            // Restore styling buttons visibility based on settings
+            chrome.storage.sync.get({ 'showStylingButtons': true }, (items) => {
+                stylingButtonsContainer.style.display = items.showStylingButtons ? 'block' : 'none';
+            });
+            
+            // Load the current note content
+            if (enableTabs) {
+                loadCurrentNoteContent();
+            } else {
+                loadSingleNoteContent();
+            }
+        }
+        
         // Save the new table mode setting
         chrome.storage.sync.set({ 'tableMode': e.target.checked });
-        
-        if (e.target.checked) {
-            enableTableMode(noteContent, spreadsheetContainer, tabContainer, insertDateButton);
-        } else {
-            disableTableMode(noteContent, spreadsheetContainer, tabContainer, insertDateButton, enableTabs);
-        }
     });
 
     // Update the spreadsheetContainer paste event listener
     spreadsheetContainer.addEventListener('paste', (e) => {
         handleTablePaste(e, spreadsheetContainer);
+    });
+
+    // Save table content when the popup is closing
+    window.addEventListener('beforeunload', () => {
+        if (toggleTableMode.checked) {
+            saveTableContent(spreadsheetContainer);
+        }
     });
 });
