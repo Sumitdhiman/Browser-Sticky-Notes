@@ -40,7 +40,7 @@ document.addEventListener('DOMContentLoaded', () => {
         'note1Name': 'Note 1',
         'note2Name': 'Note 2',
         'note3Name': 'Note 3',
-        'backgroundColor': '#FFF0F5',
+        'backgroundColor': '#F0F8FF',
         'darkMode': false,
         'lastActiveTab': 'note1',
         'showStylingButtons': true,
@@ -487,12 +487,5 @@ document.addEventListener('DOMContentLoaded', () => {
     // Update the spreadsheetContainer paste event listener
     spreadsheetContainer.addEventListener('paste', (e) => {
         handleTablePaste(e, spreadsheetContainer);
-    });
-
-    // Save table content when the popup is closing
-    window.addEventListener('beforeunload', () => {
-        if (toggleTableMode.checked) {
-            saveTableContent(spreadsheetContainer);
-        }
     });
 });

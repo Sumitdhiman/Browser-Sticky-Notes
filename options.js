@@ -28,7 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
     ];
 
     let selectedColor = '#F5F5DC'; // Default color
-    let selectedBackgroundColor = '#F8F8FF'; // Default background color
+    let selectedBackgroundColor = '#F0F8FF'; // Default background color
     let currentTheme = 'light'; // Default theme
 
     // Load saved preferences
