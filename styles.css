@@ -1,12 +1,36 @@
 /* General Styles */
+:root {
+    --primary-color: #4CAF50;
+    --secondary-color: #2196F3;
+    --background-color: #D4F6FF;
+    --dark-background-color: #444;
+    --light-background-color: #e7f6fa;
+    --text-color: #333;
+    --light-text-color: #fff;
+    --dark-text-color: #000;
+    --border-color: #ccc;
+    --dark-border-color: #888;
+    --highlight-color: #81C784;
+    --active-color: #388E3C;
+    --hover-color: #45A049;
+    --disabled-color: #ddd;
+    --disabled-text-color: #666;
+    --focus-outline-color: #4CAF50;
+    --focus-box-shadow-color: #4CAF50;
+    --copy-flash-color: rgba(26, 115, 232, 0.1);
+    --copy-flash-dark-color: rgba(138, 180, 248, 0.2);
+    --table-cell-bg-color: white;
+    --table-cell-dark-bg-color: #2f2f2f;
+    --table-cell-text-color: #000;
+    --table-cell-dark-text-color: #fff;
+}
+
 body {
-   
     font-family: Arial, sans-serif;
     margin: 10px;
     width: 300px;
-    background-color: #D4F6FF;
+    background-color: var(--background-color);
     border-radius: 10px;
-    
 }
 
 .popup-body {
@@ -18,11 +42,12 @@ body {
     transition: opacity 1.5s ease-in-out;
     opacity: 0;
     animation: slideIn 1s ease-out;
-
 }
- .popup-open {
+
+.popup-open {
     opacity: 1;
 }
+
 @keyframes slideIn {
     from {
         opacity: 0;
@@ -39,44 +64,41 @@ body {
     margin: 10px;
     padding: 20px;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #e7f6fa;
+    background-color: var(--light-background-color);
     align-items: start;
     width: auto;
 }
 
 textarea {
     width: 100%;
-    min-height: 10em !important ;
+    min-height: 10em !important;
     resize: none;
     font-size: 14px;
     padding: 10px;
     box-sizing: border-box;
-    border: 1px solid #ccc;
+    border: 1px solid var(--border-color);
     border-radius: 5px;
 }
 
 #resizeHandle {
     position: absolute;
     bottom: 0;
-    left: 0; /* Changed from right: 0; */
+    left: 0;
     width: 0;
     height: 0;
-    border-bottom: 15px solid #666; /* Adjust size and color as needed */
-    border-right: 15px solid transparent; /* Changed from border-left */
-    cursor: sw-resize; /* Changed the cursor */
-    margin-left:-2.5%;
+    border-bottom: 15px solid #666;
+    border-right: 15px solid transparent;
+    cursor: sw-resize;
+    margin-left: -2.5%;
     margin-bottom: -2.7%;
     transition: border-bottom-color 0.2s ease, opacity 0.2s ease;
-
-
 }
 
 #resizeHandle:hover {
     opacity: 0.8;
-    border-bottom-color: #888; /* Slightly lighter or darker color */
+    border-bottom-color: #888;
 }
 
-/* Header Styles */
 .header {
     display: flex;
     justify-content: space-between;
@@ -89,7 +111,7 @@ textarea {
     margin: 0;
     font-size: 18px;
     font-weight: bold;
-    background: linear-gradient(45deg, #4CAF50, #2196F3);
+    background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
@@ -101,7 +123,6 @@ textarea {
     cursor: pointer;
     opacity: 0.7;
     transition: transform 0.3s ease;
-
 }
 
 #settingsIcon:hover {
@@ -114,28 +135,23 @@ textarea {
     margin-left: 15%;
 }
 
-.donate, .othbrowsers, .moresettings
-{
+.donate,
+.othbrowsers,
+.moresettings {
     padding: 20px;
     background-color: white;
     border-radius: 8px;
-    /* Use flexbox for consistent layout */
     display: flex;
     flex-direction: column;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-#moresetting
-
-{
+#moresetting {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
     border-radius: 8px;
     padding: 20px;
 }
 
-
-
-/* Tab Buttons Styles */
 .tab-container {
     display: flex;
     margin-bottom: 10px;
@@ -143,7 +159,7 @@ textarea {
 
 .tab-button {
     flex: 1;
-    background-color: #A5D6A7;
+    background-color: var(--highlight-color);
     color: white;
     border: none;
     padding: 10px;
@@ -154,35 +170,33 @@ textarea {
     text-align: center;
     transition: all 0.2s ease-in-out;
     transform-origin: top;
-
 }
 
 .tab-button:last-child {
     margin-right: 0;
 }
 
-
-
 .tab-button.active {
-    background-color: #388E3C;
+    background-color: var(--active-color);
     transform: scale(0.95);
     animation: tabActivate 0.3s ease-out;
-
-
 }
 
 @keyframes tabActivate {
-    0% { transform: translateY(2px); }
-    100% { transform: translateY(0); }
+    0% {
+        transform: translateY(2px);
+    }
+    100% {
+        transform: translateY(0);
+    }
 }
 
 .tab-button:hover {
-    background-color: #81C784;
+    background-color: var(--hover-color);
 }
 
-/* Action Buttons Styles */
 .action-button {
-    background-color: #4CAF50;
+    background-color: var(--primary-color);
     border: none;
     color: white;
     padding: 10px 0;
@@ -196,33 +210,33 @@ textarea {
     box-sizing: border-box;
 }
 
-p{
+p {
     text-align: left;
 }
 
-a{
-    color: #4CAF50;
+a {
+    color: var(--primary-color);
     text-decoration: none;
 }
+
 .action-button:hover {
-    background-color: #45A049;
+    background-color: var(--hover-color);
 }
 
 .action-button:focus,
 .action-button:active {
     outline: none;
-    box-shadow: 0 0 0 2px #4CAF50;
+    box-shadow: 0 0 0 2px var(--focus-box-shadow-color);
     transform: scale(0.95);
     opacity: 0.8;
 }
 
 .action-button:disabled {
-    background-color: #ddd;
-    color: #666;
+    background-color: var(--disabled-color);
+    color: var(--disabled-text-color);
     cursor: default;
 }
 
-/* Word Count Styles */
 #wordCount {
     text-align: right;
     font-size: 12px;
@@ -230,13 +244,11 @@ a{
     margin-top: 5px;
     margin-right: 5px;
     transition: opacity 0.3s ease;
-
 }
+
 #wordCount.updating {
     opacity: 0.7;
 }
-
-/* Options Page Styles */
 
 #showExport,
 #useLargeFont,
@@ -247,32 +259,27 @@ a{
     height: 18px;
     cursor: pointer;
     margin-left: 5px;
-    /* Add spacing between checkbox and label */
 }
 
 .container {
     background-color: white;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    border-radius:8px;
-    padding:20px; 
+    padding: 20px;
 }
 
 .containerPallete {
-
     padding: 25px;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-
 }
 
 .palette-container {
     margin: auto;
-    /* Center horizontally and vertically */
 }
 
 h2 {
-    color: #4CAF50;
+    color: var(--primary-color);
     margin-bottom: 20px;
     text-align: center;
 }
@@ -291,8 +298,7 @@ h2 {
     border-radius: 4px;
     cursor: pointer;
     border: 2px solid transparent;
-        transition: transform 0.15s ease-in-out, border-color 0.15s ease-in-out;
-
+    transition: transform 0.15s ease-in-out, border-color 0.15s ease-in-out;
 }
 
 .color-box:hover {
@@ -302,7 +308,6 @@ h2 {
 .color-box.selected {
     border: 2px solid #2c3e50;
     transition: border-color 0.3s ease-in-out;
-
 }
 
 #footer,
@@ -317,12 +322,11 @@ h2 {
     font-size: 15px;
     font-weight: 500;
     margin-right: 5px;
-    /* Add spacing between label and checkbox */
 }
 
 button#saveButton,
 button#saveBackgroundButton {
-    background-color: #4CAF50;
+    background-color: var(--primary-color);
     color: white;
     border: none;
     padding: 10px 0;
@@ -333,12 +337,11 @@ button#saveBackgroundButton {
     transition: background-color 0.3s;
     margin-top: 10px;
     transform: scale(0.95);
-
 }
 
 button#saveButton:hover,
 button#saveBackgroundButton:hover {
-    background-color: #45A049;
+    background-color: var(--hover-color);
 }
 
 #status,
@@ -366,37 +369,32 @@ button#saveBackgroundButton:hover {
     box-sizing: border-box;
     grid-template-rows: 1fr;
 }
-.sidebar
-{
+
+.sidebar {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    border-radius:8px;
-    padding:20px; 
+    border-radius: 8px;
+    padding: 20px;
 }
+
 .notecolor,
 .backgroundcolor,
 .settings,
-.renamenotes
-
-{
+.renamenotes {
     padding: 20px;
     background-color: white;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    /* Use flexbox for consistent layout */
     display: flex;
     flex-direction: column;
 }
 
-.fifth-column
-{
+.fifth-column {
     padding: 20px;
     background-color: white;
     border-radius: 8px;
-    /* Use flexbox for consistent layout */
     display: flex;
     flex-direction: column;
 }
-
 
 .secondrow {
     padding: 20px;
@@ -404,10 +402,8 @@ button#saveBackgroundButton:hover {
     border-radius: 8px;
     grid-row: 2;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-
 }
 
-/* Rename Notes Section */
 .rename-note-container {
     display: flex;
     align-items: center;
@@ -417,7 +413,7 @@ button#saveBackgroundButton:hover {
 .rename-note-container label {
     margin-right: 10px;
     font-size: 14px;
-    color: #333;
+    color: var(--text-color);
     font-size: 15px;
     font-weight: 500;
     margin-right: 5px;
@@ -425,13 +421,13 @@ button#saveBackgroundButton:hover {
 
 .rename-note-input {
     padding: 8px;
-    border: 1px solid #ccc;
+    border: 1px solid var(--border-color);
     border-radius: 4px;
     font-size: 14px;
 }
 
 #renameButton {
-    background-color: #4CAF50;
+    background-color: var(--primary-color);
     color: white;
     border: none;
     padding: 10px 20px;
@@ -439,13 +435,12 @@ button#saveBackgroundButton:hover {
     cursor: pointer;
     font-size: 16px;
     transition: background-color 0.3s;
- 
-   margin-left:30%;
+    margin-left: 30%;
     display: block;
 }
 
 #renameButton:hover {
-    background-color: #45A049;
+    background-color: var(--hover-color);
 }
 
 #renameStatus {
@@ -453,92 +448,82 @@ button#saveBackgroundButton:hover {
     text-align: center;
     color: #27ae60;
     transition: opacity 0.3s ease-in-out;
-
 }
 
 body[data-theme="dark"] {
-    background-color: #333;
+    background-color: var(--dark-background-color);
 }
 
 body[data-theme="dark"] .popup-body {
-    background-color: #444;
-    opacity: 0; 
+    background-color: var(--dark-background-color);
+    opacity: 0;
 }
 
 body[data-theme="dark"] .bodyoptns {
-    background-color: #444;
-    color: #fff !important;
+    background-color: var(--dark-background-color);
+    color: var(--light-text-color) !important;
 }
 
 body[data-theme="dark"] h2 {
-    color: #81C784;
+    color: var(--highlight-color);
 }
 
 body[data-theme="dark"] .container {
-    background-color: #555;
-    color: #fff;
+    background-color: var(--dark-background-color);
+    color: var(--light-text-color);
 }
-
 
 body[data-theme="dark"] .containerPallete {
-    background-color: #555;
+    background-color: var(--dark-background-color);
 }
 
 body[data-theme="dark"] .notecolor,
-
-
-
 body[data-theme="dark"] .backgroundcolor,
-body[data-theme="dark"] .notecolor,
 body[data-theme="dark"] .settings,
 body[data-theme="dark"] .renamenotes,
 body[data-theme="dark"] .info,
 body[data-theme="dark"] .donate,
 body[data-theme="dark"] .moresettings,
-body[data-theme="dark"] .othbrowsers
-
-{
-    background-color: #555;
-    color:#fff !important ;
+body[data-theme="dark"] .othbrowsers {
+    background-color: var(--dark-background-color);
+    color: var(--light-text-color) !important;
     box-shadow: 0 2px 4px rgba(255, 255, 255, 0.1);
 }
 
 body[data-theme="dark"] .rename-note-input {
     background-color: #666;
-    color: #fff;
+    color: var(--light-text-color);
 }
 
 body[data-theme="dark"] #footer,
 body[data-theme="dark"] #footer1,
-body[data-theme="dark"] #labelnote
- {
+body[data-theme="dark"] #labelnote {
     color: #ddd;
 }
 
 body[data-theme="dark"] #status,
 body[data-theme="dark"] #backgroundStatus,
 body[data-theme="dark"] #renameStatus {
-    color: #81C784;
+    color: var(--highlight-color);
 }
-
 
 body[data-theme="dark"] .tab-button {
     background-color: #666;
-    color: #fff;
+    color: var(--light-text-color);
 }
 
 body[data-theme="dark"] .tab-button.active {
-    background-color: #444;
+    background-color: var(--dark-background-color);
 }
 
 body[data-theme="dark"] textarea {
     background-color: #666;
-    border: 1px solid #888;
+    border: 1px solid var(--dark-border-color);
 }
 
 body[data-theme="dark"] .action-button {
     background-color: #666;
-    color: #fff;
+    color: var(--light-text-color);
 }
 
 body[data-theme="dark"] .action-button:hover {
@@ -556,14 +541,12 @@ body[data-theme="dark"] #wordCount {
     height: 24px;
 }
 
-/* Hide default HTML checkbox */
 .switch input {
     opacity: 0;
     width: 0;
     height: 0;
 }
 
-/* The slider - the moving part */
 .slider {
     position: absolute;
     cursor: pointer;
@@ -572,8 +555,8 @@ body[data-theme="dark"] #wordCount {
     right: 0;
     bottom: 0;
     background-color: #ccc;
-    -webkit-transition: .4s;
-    transition: .4s;
+    -webkit-transition: 0.4s;
+    transition: 0.4s;
 }
 
 .slider:before {
@@ -584,16 +567,16 @@ body[data-theme="dark"] #wordCount {
     left: 4px;
     bottom: 4px;
     background-color: white;
-    -webkit-transition: .4s;
-    transition: .4s;
+    -webkit-transition: 0.4s;
+    transition: 0.4s;
 }
 
 input:checked + .slider {
-    background-color: #4CAF50;
+    background-color: var(--primary-color);
 }
 
 input:focus + .slider {
-    box-shadow: 0 0 1px #4CAF50;
+    box-shadow: 0 0 1px var(--focus-outline-color);
 }
 
 input:checked + .slider:before {
@@ -602,7 +585,6 @@ input:checked + .slider:before {
     transform: translateX(16px);
 }
 
-/* Rounded sliders */
 .slider.round {
     border-radius: 34px;
 }
@@ -623,7 +605,7 @@ input:checked + .slider:before {
     border-radius: 5px;
     padding: 5px 10px;
     cursor: pointer;
-    background-color: #4CAF50;
+    background-color: var(--primary-color);
     transform: translateY(0);
     transition: transform 0.2s ease, background-color 0.2s ease;
     display: inline-flex;
@@ -631,49 +613,45 @@ input:checked + .slider:before {
     justify-content: center;
 }
 
-
-
 body[data-theme="dark"] .styling-buttons button {
-    background-color: #666; 
-    color:#000 !important
+    background-color: #666;
+    color: var(--dark-text-color) !important;
 }
 
 .styling-buttons button:hover {
     transform: translateY(-1px);
-    background-color: #45a049;
-    background-color: #ddd; /* Slightly darker on hover */
+    background-color: var(--hover-color);
+    background-color: #ddd;
 }
 
 body[data-theme="dark"] .styling-buttons button:hover {
-    background-color: #777; /* Slightly darker on hover in dark mode */
+    background-color: #777;
 }
 
 .styling-buttons button:focus {
     outline: none;
-    box-shadow: 0 0 0 2px #ffffff; /* Green outline on focus */
+    box-shadow: 0 0 0 2px var(--light-text-color);
 }
 
 .styling-buttons button.active {
-    background-color: #4CAF50; /* Active button color - Green */
-    color: white; /* White text for contrast */
+    background-color: var(--primary-color);
+    color: white;
 }
 
 #noteContent[contenteditable="true"]:focus {
     outline: none;
 }
 
-
 body[data-theme="dark"] .styling-buttons button.active {
-    background-color: #81C784; /* Dark mode active button color */
-    color: #000; /* Black text for contrast in dark mode */
+    background-color: var(--highlight-color);
+    color: var(--dark-text-color);
 }
 
-#noteContent
-{  /* Keep the minimum height */
+#noteContent {
     box-sizing: border-box;
     padding: 10px;
-    flex-grow: 1; /* Add this line */
-    overflow-y: auto; 
+    flex-grow: 1;
+    overflow-y: auto;
     height: calc(100% - 100px);
     position: relative;
     margin-bottom: 15px;
@@ -683,17 +661,14 @@ body[data-theme="dark"] .styling-buttons button.active {
 
 #noteContent:focus {
     transform: translateY(-1px);
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-
-
 body[data-theme="dark"] #resizeHandle {
-    border-bottom-color: #ddd; /* Adjust color for dark mode */
+    border-bottom-color: #ddd;
 }
 
-/* Add these styles */
 #renameTabsBtn {
     background: none;
     border: none;
@@ -716,12 +691,12 @@ body[data-theme="dark"] #resizeHandle {
     background: white;
     padding: 15px;
     border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     z-index: 1000;
 }
 
 body[data-theme="dark"] .rename-dialog {
-    background: #444;
+    background: var(--dark-background-color);
     color: white;
 }
 
@@ -734,7 +709,7 @@ body[data-theme="dark"] .rename-dialog {
 
 .rename-inputs input {
     padding: 8px;
-    border: 1px solid #ccc;
+    border: 1px solid var(--border-color);
     border-radius: 4px;
 }
 
@@ -756,7 +731,7 @@ body[data-theme="dark"] .rename-inputs input {
     border: none;
     border-radius: 4px;
     cursor: pointer;
-    background: #4CAF50;
+    background: var(--primary-color);
     color: white;
 }
 
@@ -790,46 +765,44 @@ body[data-theme="dark"] #modeToggle {
 body[data-theme="dark"] #modeToggle label {
     color: #fff;
 }
+
 .styling-buttons button.disabled {
     opacity: 0.5;
     cursor: not-allowed;
 }
 
-      td.selected-cell {
-        outline: 2px solid #1a73e8;
-        outline-offset: -2px;
-        background-color: rgba(26, 115, 232, 0.1) !important;
-      }
+td.selected-cell {
+    outline: 2px solid #1a73e8;
+    outline-offset: -2px;
+    background-color: var(--copy-flash-color) !important;
+}
 
-      td:focus {
-        outline: none;
-      }
+td:focus {
+    outline: none;
+}
 
-      /* Ensure text color in cells being edited is appropriate for the theme */
-      body[data-theme="dark"] td:focus {
-        color: #ffffff !important;
-      }
-      
-      body[data-theme="light"] td:focus {
-        color: #000000 !important;
-      }
+body[data-theme="dark"] td:focus {
+    color: var(--table-cell-dark-text-color) !important;
+}
 
-      table td {
-        position: relative;
-        min-width: 60px;
-      }
+body[data-theme="light"] td:focus {
+    color: var(--table-cell-text-color) !important;
+}
 
-/* Table Manager Styles */
+table td {
+    position: relative;
+    min-width: 60px;
+}
+
 .table-manager-body {
     width: 400px;
     padding: 15px;
     font-family: Arial, sans-serif;
-    background-color: #D4F6FF;
+    background-color: var(--background-color);
     border-radius: 10px;
     transition: opacity 1.5s ease-in-out;
 }
 
-/* Table Controls Grid */
 .table-controls {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -837,25 +810,23 @@ body[data-theme="dark"] #modeToggle label {
     margin-top: 15px;
 }
 
-/* Table Preview Area */
 .table-preview {
     margin: 15px 0;
     max-height: 200px;
     overflow-y: auto;
-    border: 1px solid #ccc;
+    border: 1px solid var(--border-color);
     border-radius: 5px;
     background-color: white;
 }
 
-/* Table Styles */
 .table-preview table {
     width: 100%;
     border-collapse: collapse;
 }
 
-.table-preview td, 
+.table-preview td,
 .table-preview th {
-    border: 1px solid #ccc;
+    border: 1px solid var(--border-color);
     padding: 5px;
     min-height: 20px;
     height: 20px;
@@ -864,30 +835,27 @@ body[data-theme="dark"] #modeToggle label {
     position: relative;
 }
 
-/* Dark Mode Support */
 body[data-theme="dark"] .table-manager-body {
-    background-color: #444;
+    background-color: var(--dark-background-color);
 }
 
 body[data-theme="dark"] .table-preview {
-    background-color: #555;
-    border-color: #666;
+    background-color: var(--dark-background-color);
+    border-color: var(--dark-border-color);
 }
 
 body[data-theme="dark"] .table-preview td,
 body[data-theme="dark"] .table-preview th {
-    border-color: #666;
-    color: #fff;
+    border-color: var(--dark-border-color);
+    color: var(--light-text-color);
 }
 
-/* Table Cell Selection */
 .table-preview td.selected-cell {
     outline: 2px solid #1a73e8;
     outline-offset: -2px;
-    background-color: rgba(26, 115, 232, 0.1) !important;
+    background-color: var(--copy-flash-color) !important;
 }
 
-/* Delete Button Variants */
 .table-controls .action-button.delete {
     background-color: #f44336;
 }
@@ -896,70 +864,80 @@ body[data-theme="dark"] .table-preview th {
     background-color: #da190b;
 }
 
-/* Animation for the table manager */
 .table-manager-body {
     animation: slideIn 0.3s ease-out;
 }
 
-/* Add these specific rules for table cells in dark mode */
 body[data-theme="dark"] .table-preview td,
-body[data-theme="dark"] #spreadsheetContainer 
+body[data-theme="dark"] #spreadsheetContainer td {
+    background-color: var(--table-cell-dark-bg-color);
+}
 
 body[data-theme="dark"] .table-preview td.selected-cell,
 body[data-theme="dark"] #spreadsheetContainer td.selected-cell {
-    background-color: rgba(26, 115, 232, 0.1) !important;
+    background-color: var(--copy-flash-dark-color) !important;
 }
 
-/* Table cell selection styles */
-td.selected-cell, th.selected-cell {
-  outline: 2px solid #1a73e8;
-  outline-offset: -2px;
-  background-color: rgba(26, 115, 232, 0.1) !important;
+td.selected-cell,
+th.selected-cell {
+    outline: 2px solid #1a73e8;
+    outline-offset: -2px;
+    background-color: var(--copy-flash-color) !important;
 }
 
 body[data-theme="dark"] td.selected-cell,
 body[data-theme="dark"] th.selected-cell {
-  outline: 2px solid #8ab4f8;
-  background-color: rgba(138, 180, 248, 0.2) !important;
+    outline: 2px solid #8ab4f8;
+    background-color: var(--copy-flash-dark-color) !important;
 }
 
-/* Copy flash animation */
 @keyframes copyFlash {
-  0% { background-color: rgba(26, 115, 232, 0.1); }
-  50% { background-color: rgba(26, 115, 232, 0.5); }
-  100% { background-color: rgba(26, 115, 232, 0.1); }
+    0% {
+        background-color: var(--copy-flash-color);
+    }
+    50% {
+        background-color: rgba(26, 115, 232, 0.5);
+    }
+    100% {
+        background-color: var(--copy-flash-color);
+    }
 }
 
 @keyframes copyFlashDark {
-  0% { background-color: rgba(138, 180, 248, 0.2); }
-  50% { background-color: rgba(138, 180, 248, 0.5); }
-  100% { background-color: rgba(138, 180, 248, 0.2); }
+    0% {
+        background-color: var(--copy-flash-dark-color);
+    }
+    50% {
+        background-color: rgba(138, 180, 248, 0.5);
+    }
+    100% {
+        background-color: var(--copy-flash-dark-color);
+    }
 }
 
 .copy-flash {
-  animation: copyFlash 0.3s ease;
+    animation: copyFlash 0.3s ease;
 }
 
 body[data-theme="dark"] .copy-flash {
-  animation: copyFlashDark 0.3s ease;
+    animation: copyFlashDark 0.3s ease;
 }
 
-/* Add a visual indicator that cells can be selected */
 #spreadsheetContainer table {
-  user-select: none; /* Prevent text selection interfering with cell selection */
+    user-select: none;
 }
 
-#spreadsheetContainer td:hover, 
+#spreadsheetContainer td:hover,
 #spreadsheetContainer th:hover {
-  outline: 1px dashed #1a73e8;
-  cursor: cell;
+    outline: 1px dashed #1a73e8;
+    cursor: cell;
 }
 
 body[data-theme="dark"] #spreadsheetContainer td:hover,
 body[data-theme="dark"] #spreadsheetContainer th:hover {
-  outline: 1px dashed #8ab4f8;
+    outline: 1px dashed #8ab4f8;
 }
 
 body[data-theme="light"] #tableSelectionTip {
-  color: #000000 !important ;
+    color: var(--dark-text-color) !important;
 }
