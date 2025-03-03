@@ -794,3 +794,172 @@ body[data-theme="dark"] #modeToggle label {
     opacity: 0.5;
     cursor: not-allowed;
 }
+
+      td.selected-cell {
+        outline: 2px solid #1a73e8;
+        outline-offset: -2px;
+        background-color: rgba(26, 115, 232, 0.1) !important;
+      }
+
+      td:focus {
+        outline: none;
+      }
+
+      /* Ensure text color in cells being edited is appropriate for the theme */
+      body[data-theme="dark"] td:focus {
+        color: #ffffff !important;
+      }
+      
+      body[data-theme="light"] td:focus {
+        color: #000000 !important;
+      }
+
+      table td {
+        position: relative;
+        min-width: 60px;
+      }
+
+/* Table Manager Styles */
+.table-manager-body {
+    width: 400px;
+    padding: 15px;
+    font-family: Arial, sans-serif;
+    background-color: #D4F6FF;
+    border-radius: 10px;
+    transition: opacity 1.5s ease-in-out;
+}
+
+/* Table Controls Grid */
+.table-controls {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+/* Table Preview Area */
+.table-preview {
+    margin: 15px 0;
+    max-height: 200px;
+    overflow-y: auto;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: white;
+}
+
+/* Table Styles */
+.table-preview table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table-preview td, 
+.table-preview th {
+    border: 1px solid #ccc;
+    padding: 5px;
+    min-height: 20px;
+    height: 20px;
+    line-height: 20px;
+    min-width: 60px;
+    position: relative;
+}
+
+/* Dark Mode Support */
+body[data-theme="dark"] .table-manager-body {
+    background-color: #444;
+}
+
+body[data-theme="dark"] .table-preview {
+    background-color: #555;
+    border-color: #666;
+}
+
+body[data-theme="dark"] .table-preview td,
+body[data-theme="dark"] .table-preview th {
+    border-color: #666;
+    color: #fff;
+}
+
+/* Table Cell Selection */
+.table-preview td.selected-cell {
+    outline: 2px solid #1a73e8;
+    outline-offset: -2px;
+    background-color: rgba(26, 115, 232, 0.1) !important;
+}
+
+/* Delete Button Variants */
+.table-controls .action-button.delete {
+    background-color: #f44336;
+}
+
+.table-controls .action-button.delete:hover {
+    background-color: #da190b;
+}
+
+/* Animation for the table manager */
+.table-manager-body {
+    animation: slideIn 0.3s ease-out;
+}
+
+/* Add these specific rules for table cells in dark mode */
+body[data-theme="dark"] .table-preview td,
+body[data-theme="dark"] #spreadsheetContainer 
+
+body[data-theme="dark"] .table-preview td.selected-cell,
+body[data-theme="dark"] #spreadsheetContainer td.selected-cell {
+    background-color: rgba(26, 115, 232, 0.1) !important;
+}
+
+/* Table cell selection styles */
+td.selected-cell, th.selected-cell {
+  outline: 2px solid #1a73e8;
+  outline-offset: -2px;
+  background-color: rgba(26, 115, 232, 0.1) !important;
+}
+
+body[data-theme="dark"] td.selected-cell,
+body[data-theme="dark"] th.selected-cell {
+  outline: 2px solid #8ab4f8;
+  background-color: rgba(138, 180, 248, 0.2) !important;
+}
+
+/* Copy flash animation */
+@keyframes copyFlash {
+  0% { background-color: rgba(26, 115, 232, 0.1); }
+  50% { background-color: rgba(26, 115, 232, 0.5); }
+  100% { background-color: rgba(26, 115, 232, 0.1); }
+}
+
+@keyframes copyFlashDark {
+  0% { background-color: rgba(138, 180, 248, 0.2); }
+  50% { background-color: rgba(138, 180, 248, 0.5); }
+  100% { background-color: rgba(138, 180, 248, 0.2); }
+}
+
+.copy-flash {
+  animation: copyFlash 0.3s ease;
+}
+
+body[data-theme="dark"] .copy-flash {
+  animation: copyFlashDark 0.3s ease;
+}
+
+/* Add a visual indicator that cells can be selected */
+#spreadsheetContainer table {
+  user-select: none; /* Prevent text selection interfering with cell selection */
+}
+
+#spreadsheetContainer td:hover, 
+#spreadsheetContainer th:hover {
+  outline: 1px dashed #1a73e8;
+  cursor: cell;
+}
+
+body[data-theme="dark"] #spreadsheetContainer td:hover,
+body[data-theme="dark"] #spreadsheetContainer th:hover {
+  outline: 1px dashed #8ab4f8;
+}
+
+body[data-theme="light"] #tableSelectionTip {
+  color: #000000 !important ;
+}
