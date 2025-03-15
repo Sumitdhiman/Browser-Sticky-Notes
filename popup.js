@@ -338,6 +338,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let isResizing = false;
     let startX, startY, startWidth, startHeight;
     let resizeScheduled = false;
+    let animationFrameId = null;
 
     resizeHandle.addEventListener('mousedown', (e) => {
         isResizing = true;
@@ -351,30 +352,37 @@ document.addEventListener('DOMContentLoaded', () => {
     document.addEventListener('mousemove', (e) => {
         if (!isResizing) return;
 
-        if (!resizeScheduled) {
-            resizeScheduled = true;
+        // Cancel any pending animation frame to prevent stacking
+        if (animationFrameId) {
+            cancelAnimationFrame(animationFrameId);
+        }
 
-            requestAnimationFrame(() => {
-                // Calculate the change in mouse position
-                const deltaX = e.clientX - startX;
-                const deltaY = e.clientY - startY;
+        // Schedule resize with reduced sensitivity for smoother experience
+        animationFrameId = requestAnimationFrame(() => {
+            // Calculate the change in mouse position
+            const deltaX = e.clientX - startX;
+            const deltaY = e.clientY - startY;
 
-                // Adjust the width and height, inverting the horizontal calculation
-                const width = startWidth - (deltaX * 0.5); // Invert by using subtraction
-                const height = startHeight + (deltaY * 0.5); // Adjust sensitivity here
+            // Adjust the width and height with reduced sensitivity factors
+            const width = startWidth - (deltaX * 0.3); // Lower factor for smoother resizing
+            const height = startHeight + (deltaY * 0.3); // Lower factor for smoother resizing
 
-                console.log("Setting popupBody height to:", height + 'px');
-                // Apply the new dimensions to the popup
+            // Apply the new dimensions to the popup (only if they've changed significantly)
+            if (Math.abs(deltaX) > 2 || Math.abs(deltaY) > 2) {
                 popupBody.style.width = width + 'px';
                 popupBody.style.height = height + 'px';
-
-                resizeScheduled = false;
-            });
-        }
+            }
+            
+            animationFrameId = null;
+        });
     });
 
     document.addEventListener('mouseup', () => {
         isResizing = false;
+        if (animationFrameId) {
+            cancelAnimationFrame(animationFrameId);
+            animationFrameId = null;
+        }
     });
 
     function updateButtonStates() {
@@ -450,6 +458,12 @@ document.addEventListener('DOMContentLoaded', () => {
             enableTableMode(noteContent, spreadsheetContainer, tabContainer, insertDateButton);
             stylingButtonsContainer.style.display = 'none';
             
+            // Adjust popup width for table mode to provide more space for the table
+            const currentWidth = parseInt(document.defaultView.getComputedStyle(popupBody).width, 10);
+            if (currentWidth < 400) {
+                popupBody.style.width = '400px';
+            }
+            
             // Create and show tooltip for table selection
             let selectionTip = document.getElementById('tableSelectionTip');
             if (!selectionTip) {
@@ -463,6 +477,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 spreadsheetContainer.parentNode.insertBefore(selectionTip, spreadsheetContainer.nextSibling);
             }
             selectionTip.style.display = 'block';
+
+            // Set a visual indicator for the scrollable area if there's overflow
+            setTimeout(() => {
+                if (spreadsheetContainer.scrollWidth > spreadsheetContainer.clientWidth) {
+                    spreadsheetContainer.style.boxShadow = 'inset -10px 0 5px -6px rgba(0,0,0,0.15)';
+                }
+            }, 200);
         } else {
             // Disable table mode
             disableTableMode(noteContent, spreadsheetContainer, tabContainer, insertDateButton, enableTabs);
@@ -478,6 +499,9 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 loadSingleNoteContent();
             }
+
+            // Reset any table-specific styling
+            spreadsheetContainer.style.boxShadow = '';
         }
         
         // Save the new table mode setting
@@ -487,5 +511,23 @@ document.addEventListener('DOMContentLoaded', () => {
     // Update the spreadsheetContainer paste event listener
     spreadsheetContainer.addEventListener('paste', (e) => {
         handleTablePaste(e, spreadsheetContainer);
+    });
+    // Enhance spreadsheet container for better horizontal scrolling
+    spreadsheetContainer.addEventListener('scroll', () => {
+        if (spreadsheetContainer.scrollLeft > 0) {
+            spreadsheetContainer.style.boxShadow = 'inset -10px 0 5px -6px rgba(0,0,0,0.15), inset 10px 0 5px -6px rgba(0,0,0,0.15)';
+        } else {
+            spreadsheetContainer.style.boxShadow = 'inset -10px 0 5px -6px rgba(0,0,0,0.15)';
+        }
+    });
+
+    chrome.storage.onChanged.addListener((changes) => {
+        if (changes.hideTableModeToggle) {
+            modeToggle.style.display = !changes.hideTableModeToggle.newValue ? 'none' : 'flex';
+        }
+        if (changes.darkMode && toggleTableMode.checked) {
+            const isDarkMode = changes.darkMode.newValue;
+            updateTableCellStyles(isDarkMode);
+        }
     });
 });

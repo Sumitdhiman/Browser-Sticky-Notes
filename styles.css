@@ -1,24 +1,21 @@
 /* General Styles */
 body {
-   
     font-family: Arial, sans-serif;
     margin: 10px;
     width: 300px;
     background-color: #D4F6FF;
     border-radius: 10px;
-    
 }
 
 .popup-body {
     min-height: 100px !important;
-    overflow: hidden;
+    overflow: hidden; /* Ensure no vertical scrollbar appears by default */
     position: relative;
     display: flex;
     flex-direction: column;
     transition: opacity 1.5s ease-in-out;
     opacity: 0;
     animation: slideIn 1s ease-out;
-
 }
  .popup-open {
     opacity: 1;
@@ -34,14 +31,16 @@ body {
     }
 }
 
+/* Options Page Redesign */
 .bodyoptns {
     overflow-y: auto;
-    margin: 10px;
-    padding: 20px;
+    margin: 0;
+    padding: 24px;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #e7f6fa;
-    align-items: start;
+    background-color: #f5f9fa;
     width: auto;
+    color: #333;
+    line-height: 1.5;
 }
 
 textarea {
@@ -116,7 +115,7 @@ textarea {
 
 .donate, .othbrowsers, .moresettings
 {
-    padding: 20px;
+    padding: 15px;
     background-color: white;
     border-radius: 8px;
     /* Use flexbox for consistent layout */
@@ -251,7 +250,7 @@ a{
 }
 
 .container {
-    background-color: white;
+  
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     border-radius:8px;
@@ -272,37 +271,53 @@ a{
 }
 
 h2 {
-    color: #4CAF50;
+    color: #2E7D32;
     margin-bottom: 20px;
     text-align: center;
+    font-size: 20px;
+    font-weight: 600;
+    position: relative;
+    padding-bottom: 8px;
+}
+
+h2::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 40px;
+    height: 3px;
+    background-color: #4CAF50;
+    border-radius: 3px;
 }
 
 #colorPalette,
 #backgroundColorPalette {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 12px;
+    grid-template-columns: repeat(5, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    gap: 14px;
     margin-bottom: 20px;
 }
 
 .color-box {
-    width: 30px;
-    height: 30px;
-    border-radius: 4px;
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
     cursor: pointer;
     border: 2px solid transparent;
-        transition: transform 0.15s ease-in-out, border-color 0.15s ease-in-out;
-
+    transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .color-box:hover {
-    transform: scale(1.1);
+    transform: scale(1.15);
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
 }
 
 .color-box.selected {
     border: 2px solid #2c3e50;
-    transition: border-color 0.3s ease-in-out;
-
+    box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.3);
 }
 
 #footer,
@@ -316,56 +331,100 @@ h2 {
 .optionlabel {
     font-size: 15px;
     font-weight: 500;
-    margin-right: 5px;
-    /* Add spacing between label and checkbox */
+    margin-right: 10px;
+    color: #444;
 }
 
 button#saveButton,
-button#saveBackgroundButton {
+button#saveBackgroundButton,
+button#renameButton {
     background-color: #4CAF50;
     color: white;
     border: none;
-    padding: 10px 0;
-    border-radius: 5px;
+    padding: 12px 0;
+    border-radius: 8px;
     cursor: pointer;
     width: 100%;
     font-size: 16px;
-    transition: background-color 0.3s;
-    margin-top: 10px;
-    transform: scale(0.95);
-
+    font-weight: 500;
+    transition: background-color 0.3s, transform 0.2s;
+    margin-top: 15px;
+    box-shadow: 0 2px 6px rgba(76, 175, 80, 0.2);
 }
 
 button#saveButton:hover,
-button#saveBackgroundButton:hover {
-    background-color: #45A049;
+button#saveBackgroundButton:hover,
+button#renameButton:hover {
+    background-color: #3d9141;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(76, 175, 80, 0.3);
+}
+
+button#saveButton:active,
+button#saveBackgroundButton:active,
+button#renameButton:active {
+    transform: translateY(1px);
+}
+
+#renameButton {
+    margin-left: 0;
+    width: 100%;
+    display: block;
 }
 
 #status,
-#backgroundStatus {
-    margin-top: 10px;
+#backgroundStatus,
+#renameStatus {
+    margin-top: 15px;
     text-align: center;
     color: #27ae60;
+    font-weight: 500;
+    height: 20px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+#status.show,
+#backgroundStatus.show,
+#renameStatus.show {
+    opacity: 1;
 }
 
 .option-row {
-    margin-top: 10px;
+    margin-top: 5px;
     display: flex;
     align-items: center;
-    padding: 5px;
-    border-radius: 5px;
+    padding:5px;
+    border-radius: 8px;
     justify-content: space-between;
+    transition: background-color 0.2s ease;
+}
+
+.option-row:hover {
+    background-color: rgba(0, 0, 0, 0.03);
 }
 
 .options-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    grid-template-rows: repeat(2, auto);
-    gap: 20px;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 24px;
     width: 100%;
     box-sizing: border-box;
-    grid-template-rows: 1fr;
+    margin-bottom: 24px;
 }
+
+@media (min-width: 1200px) {
+    .options-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+@media (max-width: 1199px) and (min-width: 768px) {
+    .options-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
 .sidebar
 {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -375,16 +434,45 @@ button#saveBackgroundButton:hover {
 .notecolor,
 .backgroundcolor,
 .settings,
-.renamenotes
+.renamenotes,
+.info,
+.donate,
+.moresettings,
+.othbrowsers
 
 {
-    padding: 20px;
+    padding: 15px;
     background-color: white;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    /* Use flexbox for consistent layout */
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
     display: flex;
     flex-direction: column;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.notecolor:hover,
+.backgroundcolor:hover,
+.settings:hover,
+.renamenotes:hover,
+.info:hover,
+.donate:hover,
+.moresettings:hover,
+.othbrowsers:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
+}
+
+.containerPallete,
+.container,
+.sidebar,
+#moresetting {
+
+    border-radius: 10px;
+    padding: 15px;
+    box-shadow: none;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    margin-top: 5px;
 }
 
 .fifth-column
@@ -411,23 +499,37 @@ button#saveBackgroundButton:hover {
 .rename-note-container {
     display: flex;
     align-items: center;
-    margin-bottom: 30px;
+    margin-bottom: 15px;
+    padding: 8px 5px;
+    border-radius: 6px;
+    transition: background-color 0.2s ease;
+}
+
+.rename-note-container:hover {
+    background-color: rgba(0, 0, 0, 0.03);
 }
 
 .rename-note-container label {
     margin-right: 10px;
-    font-size: 14px;
-    color: #333;
     font-size: 15px;
+    color: #444;
     font-weight: 500;
-    margin-right: 5px;
+    width: 70px;
 }
 
 .rename-note-input {
-    padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+    flex: 1;
+    padding: 10px 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
     font-size: 14px;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.rename-note-input:focus {
+    border-color: #4CAF50;
+    box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
+    outline: none;
 }
 
 #renameButton {
@@ -457,7 +559,7 @@ button#saveBackgroundButton:hover {
 }
 
 body[data-theme="dark"] {
-    background-color: #333;
+    background-color: #1e2023;
 }
 
 body[data-theme="dark"] .popup-body {
@@ -466,30 +568,22 @@ body[data-theme="dark"] .popup-body {
 }
 
 body[data-theme="dark"] .bodyoptns {
-    background-color: #444;
-    color: #fff !important;
+    background-color: #282c34;
+    color: #eaeaea;
 }
 
 body[data-theme="dark"] h2 {
     color: #81C784;
 }
 
-body[data-theme="dark"] .container {
+body[data-theme="dark"] .container .containerPallete{
     background-color: #555;
-    color: #fff;
 }
 
 
-body[data-theme="dark"] .containerPallete {
-    background-color: #555;
-}
 
 body[data-theme="dark"] .notecolor,
-
-
-
 body[data-theme="dark"] .backgroundcolor,
-body[data-theme="dark"] .notecolor,
 body[data-theme="dark"] .settings,
 body[data-theme="dark"] .renamenotes,
 body[data-theme="dark"] .info,
@@ -498,14 +592,15 @@ body[data-theme="dark"] .moresettings,
 body[data-theme="dark"] .othbrowsers
 
 {
-    background-color: #555;
-    color:#fff !important ;
-    box-shadow: 0 2px 4px rgba(255, 255, 255, 0.1);
+    background-color: #3a3f4b;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 body[data-theme="dark"] .rename-note-input {
-    background-color: #666;
-    color: #fff;
+    background-color: #3a3f4b;
+    border-color: #555;
+    color: #eaeaea;
 }
 
 body[data-theme="dark"] #footer,
@@ -519,8 +614,8 @@ body[data-theme="dark"] #status,
 body[data-theme="dark"] #backgroundStatus,
 body[data-theme="dark"] #renameStatus {
     color: #81C784;
+    box-shadow: 0 0 0 3px rgba(129, 199, 132, 0.2);
 }
-
 
 body[data-theme="dark"] .tab-button {
     background-color: #666;
@@ -552,7 +647,7 @@ body[data-theme="dark"] #wordCount {
 .switch {
     position: relative;
     display: inline-block;
-    width: 40px;
+    width: 46px;
     height: 24px;
 }
 
@@ -572,20 +667,20 @@ body[data-theme="dark"] #wordCount {
     right: 0;
     bottom: 0;
     background-color: #ccc;
-    -webkit-transition: .4s;
     transition: .4s;
+    border-radius: 34px;
 }
 
 .slider:before {
     position: absolute;
     content: "";
-    height: 16px;
-    width: 16px;
-    left: 4px;
-    bottom: 4px;
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    bottom: 3px;
     background-color: white;
-    -webkit-transition: .4s;
     transition: .4s;
+    border-radius: 50%;
 }
 
 input:checked + .slider {
@@ -597,18 +692,17 @@ input:focus + .slider {
 }
 
 input:checked + .slider:before {
-    -webkit-transform: translateX(16px);
-    -ms-transform: translateX(16px);
-    transform: translateX(16px);
+    transform: translateX(22px);
 }
 
-/* Rounded sliders */
-.slider.round {
-    border-radius: 34px;
+body[data-theme="dark"] .optionlabel,
+body[data-theme="dark"] #labelnote {
+    color: #ccc;
 }
 
-.slider.round:before {
-    border-radius: 50%;
+body[data-theme="dark"] .option-row:hover,
+body[data-theme="dark"] .rename-note-container:hover {
+    background-color: rgba(255, 255, 255, 0.05);
 }
 
 .styling-buttons {
@@ -819,7 +913,7 @@ body[data-theme="dark"] #modeToggle label {
         min-width: 60px;
       }
 
-/* Table Manager Styles */
+      /* Table Manager Styles */
 .table-manager-body {
     width: 400px;
     padding: 15px;
@@ -831,10 +925,46 @@ body[data-theme="dark"] #modeToggle label {
 
 /* Table Controls Grid */
 .table-controls {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-    margin-top: 15px;
+    display: flex; /* Changed to flexbox */
+    justify-content: space-around; /* Distribute buttons evenly */
+    margin: 5px 0;
+}
+
+.single-row-controls .table-controls {
+    display: flex;
+    justify-content: flex-start; /* Align items to the start */
+    align-items: center; /* Vertically align items */
+    gap: 5px; /* Add some space between the buttons */
+    overflow-x: auto; /* Enable horizontal scrolling if needed */
+    padding: 5px; /* Add some padding around the buttons */
+}
+
+.table-control-button {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 6px 5px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 13px;
+    transition: background-color 0.2s, transform 0.1s;
+}
+
+.table-control-button:hover {
+    background-color: #45A049;
+    transform: translateY(-1px);
+}
+
+.table-control-button:active {
+    transform: translateY(0);
+}
+
+body[data-theme="dark"] .table-control-button {
+    color: #fff;
+}
+
+body[data-theme="dark"] .table-control-button:hover {
+    background-color: #777;
 }
 
 /* Table Preview Area */
@@ -867,6 +997,11 @@ body[data-theme="dark"] #modeToggle label {
 /* Dark Mode Support */
 body[data-theme="dark"] .table-manager-body {
     background-color: #444;
+}
+
+body[data-theme="dark"] h1
+{
+    color: #ccc;
 }
 
 body[data-theme="dark"] .table-preview {
@@ -960,6 +1095,172 @@ body[data-theme="dark"] #spreadsheetContainer th:hover {
   outline: 1px dashed #8ab4f8;
 }
 
+/* Add styling for the spreadsheet container to enable horizontal scrolling */
+#spreadsheetContainer {
+  overflow-x: auto; /* Enable horizontal scrolling */
+  overflow-y: hidden; /* Prevent vertical scrolling */
+  max-width: 100%; /* Ensure it doesn't exceed the popup width */
+  margin-bottom: 10px;
+}
+
+#spreadsheetContainer table {
+  min-width: 100%; /* Ensure the table takes at least full width */
+  user-select: none; /* Prevent text selection interfering with cell selection */
+}
+
+/* Ensure the table cells have consistent width */
+#spreadsheetContainer td, 
+#spreadsheetContainer th {
+  min-width: 80px; /* Set a minimum width for cells */
+  max-width: 200px; /* Set a maximum width for cells */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Allow text wrapping when editing a cell */
+#spreadsheetContainer td:focus, 
+#spreadsheetContainer th:focus {
+  white-space: normal;
+  overflow: visible;
+}
+
+/* Ensure the table cells have consistent width */
+#spreadsheetContainer td, 
+#spreadsheetContainer th {
+  min-width: 80px; /* Set a minimum width for cells */
+  max-width: 200px; /* Set a maximum width for cells */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Allow text wrapping when editing a cell */
+#spreadsheetContainer td:focus, 
+#spreadsheetContainer th:focus {
+  white-space: normal;
+  overflow: visible;
+}
+
+/* Existing styles */
 body[data-theme="light"] #tableSelectionTip {
-  color: #000000 !important ;
+  color: #000000 !important;
+}
+
+/* Options Page Specific Optimizations */
+
+/* Fix layout issues */
+.options-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 24px;
+    width: 100%;
+    box-sizing: border-box;
+    margin-bottom: 24px;
+}
+
+@media (min-width: 1200px) {
+    .options-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+@media (max-width: 1199px) and (min-width: 768px) {
+    .options-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* Fix dark mode message display */
+#darkModeMessage {
+    display: none;
+    color: #ff9800; 
+    margin-top: 12px; 
+    text-align: center;
+    padding: 8px;
+    border-radius: 4px;
+    background-color: rgba(255, 152, 0, 0.1);
+    border: 1px solid rgba(255, 152, 0, 0.2);
+}
+
+/* Fix inconsistent heading styles */
+h2.bmc {
+    color: #2E7D32;
+    margin-bottom: 20px;
+    text-align: center;
+    font-size: 20px;
+    font-weight: 600;
+    position: relative;
+}
+
+h2.bmc::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 40px;
+    height: 3px;
+    background-color: #4CAF50;
+    border-radius: 3px;
+}
+
+/* Consistent footer styling */
+#footer, #footer1 {
+    margin-top: 1px;
+    padding-top: 1px;
+    
+}
+
+
+
+/* Fix container padding inconsistencies */
+.container,
+.containerPallete,
+.sidebar,
+#moresetting {
+    padding: 20px;
+    margin-top: 15px;
+}
+
+/* Fix button styling inconsistencies */
+#renameButton {
+    margin-left: 0;
+    width: 100%;
+    display: block;
+}
+
+/* Clean up role="status" styles */
+[role="status"] {
+    margin-top: 15px;
+    text-align: center;
+    color: #27ae60;
+    font-weight: 500;
+    height: 20px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+[role="status"].show {
+    opacity: 1;
+}
+
+/* Fix inconsistent links */
+.bodyoptns a {
+    color: #4CAF50;
+    text-decoration: none;
+    transition: color 0.2s ease, text-decoration 0.2s ease;
+}
+
+.bodyoptns a:hover {
+    color: #388E3C;
+    text-decoration: underline;
+}
+
+body[data-theme="dark"] .bodyoptns a {
+    color: #81C784;
+}
+
+body[data-theme="dark"] .bodyoptns a:hover {
+    color: #A5D6A7;
 }

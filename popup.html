@@ -23,9 +23,17 @@
         <input type="checkbox" id="toggleTableMode" />
     </div>
 
-    <!-- Update the button text to reflect table management -->
+    <!-- Table Controls - Initially Hidden -->
+    <div id="tableControlsContainer" class="single-row-controls" style="display: none; margin: 5px 0;">
+        <div class="table-controls">
+            <button id="addRowButton" class="table-control-button">Add Row</button>
+            <button id="addColumnButton" class="table-control-button">Add Column</button>
+            <button id="deleteRowButton" class="table-control-button">Delete Row</button>
+            <button id="deleteColumnButton" class="table-control-button">Delete Column</button>
+        </div>
+    </div>
 
-   <!--  Note Content -->
+    <!--  Note Content -->
     <div id="noteContent" contenteditable="true" style="width: 100%; min-height: 10em !important; border: 1px solid #ccc; border-radius: 5px;"></div>
 <!-- Spreadsheet/Table Mode Container (initially hidden) -->
   <div id="spreadsheetContainer" style="display: none; margin-top: 10px;"></div>
@@ -35,6 +43,7 @@
         <button id="italicButton"><em>I</em></button>
         <button id="underlineButton"><u>U</u></button>
         <button id="insertDateButton"><span class="calendar-icon">📅</span></button>
+        <!-- Note: Use window.debugStorageContent() in console to debug storage -->
     </div>
 
     <!-- Word Count -->

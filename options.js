@@ -89,8 +89,8 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderPalettes() {
         // Render note color palette
         colorPalette.innerHTML = '';
-        for (let i = 0; i < 16; i++) {
-            const color = pastelColors[i] || '#ffffff'; // Use white if color is not defined
+        for (let i = 0; i < 15; i++) {
+            const color = pastelColors[i];
             const colorBox = document.createElement('div');
             colorBox.classList.add('color-box');
             colorBox.style.backgroundColor = color;
@@ -111,8 +111,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Render background color palette
         backgroundColorPalette.innerHTML = '';
-        for (let i = 0; i < 16; i++) {
-            const color = pastelColors[i] || '#ffffff'; // Use white if color is not defined
+        for (let i = 0; i < 15; i++) {
+            const color = pastelColors[i];
             const colorBox = document.createElement('div');
             colorBox.classList.add('color-box');
             colorBox.style.backgroundColor = color;
@@ -136,14 +136,22 @@ document.addEventListener('DOMContentLoaded', () => {
     saveButton.addEventListener('click', () => {
         chrome.storage.sync.set({ textAreaBgColor: selectedColor }, () => {
             statusDiv.textContent = 'Nice color! Settings saved!';
-            setTimeout(() => { statusDiv.textContent = ''; }, 1500);
+            statusDiv.classList.add('show');
+            setTimeout(() => { 
+                statusDiv.classList.remove('show');
+                setTimeout(() => { statusDiv.textContent = ''; }, 300);
+            }, 1500);
         });
     });
 
     saveBackgroundButton.addEventListener('click', () => {
         chrome.storage.sync.set({ backgroundColor: selectedBackgroundColor }, () => {
             backgroundStatusDiv.textContent = 'Background color saved!';
-            setTimeout(() => { backgroundStatusDiv.textContent = ''; }, 1500);
+            backgroundStatusDiv.classList.add('show');
+            setTimeout(() => { 
+                backgroundStatusDiv.classList.remove('show');
+                setTimeout(() => { backgroundStatusDiv.textContent = ''; }, 300);
+            }, 1500);
         });
     });
 
@@ -159,7 +167,11 @@ document.addEventListener('DOMContentLoaded', () => {
             'note3Name': note3Name
         }, () => {
             renameStatusDiv.textContent = 'Note names updated!';
-            setTimeout(() => { renameStatusDiv.textContent = ''; }, 1500);
+            renameStatusDiv.classList.add('show');
+            setTimeout(() => { 
+                renameStatusDiv.classList.remove('show');
+                setTimeout(() => { renameStatusDiv.textContent = ''; }, 300);
+            }, 1500);
             updateTabNamesInPopup();
         });
     });
