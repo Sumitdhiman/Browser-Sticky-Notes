@@ -8,17 +8,19 @@ body {
 }
 
 .popup-body {
-    min-height: 100px !important;
+    min-height: 200px !important;
     overflow: hidden; /* Ensure no vertical scrollbar appears by default */
     position: relative;
     display: flex;
     flex-direction: column;
     transition: opacity 1.5s ease-in-out;
     opacity: 0;
-    animation: slideIn 1s ease-out;
+    animation: slideIn 1s ease-out; 
+    transform: translateY(10px);
 }
  .popup-open {
-    opacity: 1;
+    opacity: 1;  
+    transform: translateY(0);
 }
 @keyframes slideIn {
     from {
@@ -80,15 +82,16 @@ textarea {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 8px;
-    margin-bottom: 10px;
-}
+    padding-bottom: 12px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    margin-bottom: 15px;}
+
 
 .title {
     margin: 0;
     font-size: 18px;
     font-weight: bold;
-    background: linear-gradient(45deg, #4CAF50, #2196F3);
+    background: linear-gradient(45deg, #ace6ae, #2196F3);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
@@ -137,37 +140,80 @@ textarea {
 /* Tab Buttons Styles */
 .tab-container {
     display: flex;
-    margin-bottom: 10px;
+    background-color: #f5f5f5;
+    border-radius: 12px 12px 0 0;
+    padding: 6px 6px 0 6px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-bottom: none;
+    position: relative;
+    z-index: 2;
+    overflow: hidden;
 }
 
 .tab-button {
     flex: 1;
-    background-color: #A5D6A7;
-    color: white;
-    border: none;
     padding: 10px;
+    background: none;
+    border: none;
     cursor: pointer;
-    font-size: 16px;
-    border-radius: 5px 5px 0 0;
-    margin-right: 2px;
-    text-align: center;
-    transition: all 0.2s ease-in-out;
-    transform-origin: top;
-
+    font-size: 14px;
+    transition: all 0.2s ease;
+    position: relative;
+    outline: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;  
+    border-radius: 8px 8px 0 0;
+    margin: 0 3px;
 }
-
-.tab-button:last-child {
-    margin-right: 0;
-}
-
-
 
 .tab-button.active {
-    background-color: #388E3C;
-    transform: scale(0.95);
-    animation: tabActivate 0.3s ease-out;
+    background-color: #4a90e2;
+    color: white;
+    font-weight: 500;
+    box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+    transform: translateY(0);
+    position: relative;
+    z-index: 1;
+}
 
+.tab-button.active::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-top: 10px solid #4a90e2;
+    z-index: 3;
+}
 
+.tab-button:not(.active) {
+    opacity: 0.8;
+    transition: background-color 0.3s ease, opacity 0.3s ease;
+}
+
+.tab-button:not(.active):hover {
+    background-color: rgba(0, 0, 0, 0.05);
+    opacity: 1;
+}
+
+/* Note Content connection to tabs */
+#noteContent {
+    border-radius: 0 0 5px 5px;
+    border-top-width: 0;
+    position: relative;
+    z-index: 1;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-top: -1px;
+    padding-top: 15px;
 }
 
 @keyframes tabActivate {
@@ -175,24 +221,20 @@ textarea {
     100% { transform: translateY(0); }
 }
 
-.tab-button:hover {
-    background-color: #81C784;
-}
-
 /* Action Buttons Styles */
 .action-button {
-    background-color: #4CAF50;
-    border: none;
+    background-color: #4a90e2;
     color: white;
-    padding: 10px 0;
-    text-align: center;
-    font-size: 16px;
-    margin: 4px 0;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 4px;
     cursor: pointer;
-    border-radius: 5px;
-    transition: background-color 0.3s ease;
-    width: 100%;
-    box-sizing: border-box;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: background-color 0.2s ease;
+    margin-top: 5px;
 }
 
 p{
@@ -204,7 +246,7 @@ a{
     text-decoration: none;
 }
 .action-button:hover {
-    background-color: #45A049;
+    background-color: #3a7dce;
 }
 
 .action-button:focus,
@@ -617,13 +659,22 @@ body[data-theme="dark"] #renameStatus {
     box-shadow: 0 0 0 3px rgba(129, 199, 132, 0.2);
 }
 
+body[data-theme="dark"] .tab-container {
+    background-color: #363636;
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
 body[data-theme="dark"] .tab-button {
     background-color: #666;
     color: #fff;
 }
 
 body[data-theme="dark"] .tab-button.active {
-    background-color: #444;
+    background-color: #3a7dce;
+}
+
+body[data-theme="dark"] .tab-button.active::after {
+    border-top: 10px solid #3a7dce;
 }
 
 body[data-theme="dark"] textarea {
@@ -642,6 +693,10 @@ body[data-theme="dark"] .action-button:hover {
 
 body[data-theme="dark"] #wordCount {
     color: #ddd;
+}
+
+body[data-theme="dark"] #noteContent {
+    border-color: rgba(255, 255, 255, 0.1);
 }
 
 .switch {
@@ -705,10 +760,10 @@ body[data-theme="dark"] .rename-note-container:hover {
     background-color: rgba(255, 255, 255, 0.05);
 }
 
-.styling-buttons {
-    margin-top: 5px;
-    margin-bottom: 5px;
-    text-align: center;
+.styling-buttons {  display: flex  !important;
+    gap: 8px;
+    margin-top: 12px;
+    justify-content: center;
 }
 
 .styling-buttons button {
@@ -717,7 +772,9 @@ body[data-theme="dark"] .rename-note-container:hover {
     border-radius: 5px;
     padding: 5px 10px;
     cursor: pointer;
-    background-color: #4CAF50;
+    border: 1px solid #ddd;
+    background-color: white;
+border-radius: 4px;
     transform: translateY(0);
     transition: transform 0.2s ease, background-color 0.2s ease;
     display: inline-flex;
@@ -728,18 +785,27 @@ body[data-theme="dark"] .rename-note-container:hover {
 
 
 body[data-theme="dark"] .styling-buttons button {
-    background-color: #666; 
-    color:#000 !important
+    background-color: #fff; 
+    color:#666 !important
 }
 
 .styling-buttons button:hover {
-    transform: translateY(-1px);
-    background-color: #45a049;
-    background-color: #ddd; /* Slightly darker on hover */
+   
+
+    background-color: #f5f5f5;
+    border-color: #ccc;
+
+}
+
+fa, .fas {
+    font-weight: 900;
+}
+.fa, .far, .fas {
+    font-family: "Font Awesome 5 Free";
 }
 
 body[data-theme="dark"] .styling-buttons button:hover {
-    background-color: #777; /* Slightly darker on hover in dark mode */
+    background-color: #555; /* Slightly darker on hover in dark mode */
 }
 
 .styling-buttons button:focus {
@@ -748,8 +814,9 @@ body[data-theme="dark"] .styling-buttons button:hover {
 }
 
 .styling-buttons button.active {
-    background-color: #4CAF50; /* Active button color - Green */
-    color: white; /* White text for contrast */
+    background-color: #e6f0fd;
+    border-color: #4a90e2;
+    color: #4a90e2;
 }
 
 #noteContent[contenteditable="true"]:focus {
@@ -758,27 +825,42 @@ body[data-theme="dark"] .styling-buttons button:hover {
 
 
 body[data-theme="dark"] .styling-buttons button.active {
-    background-color: #81C784; /* Dark mode active button color */
-    color: #000; /* Black text for contrast in dark mode */
+    background-color: #2a4d7a;
+    border-color: #7ab0ff;
+    color: #e0e0e0;
 }
 
 #noteContent
 {  /* Keep the minimum height */
     box-sizing: border-box;
     padding: 10px;
-    flex-grow: 1; /* Add this line */
-    overflow-y: auto; 
-    height: calc(100% - 100px);
+    flex-grow: 1;
+    overflow-y: auto;
+    height: calc(100% - 150px);
     position: relative;
-    margin-bottom: 15px;
+    margin-bottom: 10px;
     transition: background-color 0.3s ease, height 0.3s ease;
     white-space: pre-wrap;
+    min-height: 150px;
+    max-height: calc(100% - 150px);
+    width: 100%;
+    margin-bottom: 15px;
 }
 
 #noteContent:focus {
-    transform: translateY(-1px);
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+        transform: translateY(-1px);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+body[data-theme="dark"] .note-content {
+    border-color: #555;
+    background-color: #333;
+    color: #000000 !important; /* Change text color to black */
+}
+
+body[data-theme="dark"] .note-content:focus {
+    border-color: #7ab0ff;
+    box-shadow: 0 0 0 2px rgba(122, 176, 255, 0.2);
 }
 
 
@@ -864,12 +946,19 @@ body[data-theme="dark"] .rename-inputs input {
 
 #modeToggle {
     margin: 10px 0;
-    display: flex;
+    display: none; /* Hidden by default */
     align-items: center;
     justify-content: space-between;
     padding: 0 5px;
     border-radius: 5px;
     height: 30px;
+    opacity: 0;
+    transition: opacity 0.3s ease-out;
+}
+
+#modeToggle.visible {
+    display: flex;
+    opacity: 1;
 }
 
 #modeToggle label {
@@ -924,6 +1013,12 @@ body[data-theme="dark"] #modeToggle label {
 }
 
 /* Table Controls Grid */
+.table-controls-container {
+    margin: 12px 0;
+    background-color: #f8f8f8;
+    border-radius: 6px;
+    padding: 8px;
+}
 .table-controls {
     display: flex; /* Changed to flexbox */
     justify-content: space-around; /* Distribute buttons evenly */
@@ -939,20 +1034,23 @@ body[data-theme="dark"] #modeToggle label {
     padding: 5px; /* Add some padding around the buttons */
 }
 
-.table-control-button {
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    padding: 6px 5px;
+.table-control-button { 
+    background-color: white;
+    border: 1px solid #ddd;
     border-radius: 4px;
+    padding: 6px 10px;
+    font-size: 12px;
     cursor: pointer;
-    font-size: 13px;
-    transition: background-color 0.2s, transform 0.1s;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 4px;
 }
 
 .table-control-button:hover {
-    background-color: #45A049;
-    transform: translateY(-1px);
+    background-color: #f1f1f1;
+    border-color: #bbb;
+
 }
 
 .table-control-button:active {
@@ -960,11 +1058,18 @@ body[data-theme="dark"] #modeToggle label {
 }
 
 body[data-theme="dark"] .table-control-button {
-    color: #fff;
+    color: #444;
+    border-color: #555;
+    background-color: #e0e0e0;
 }
 
 body[data-theme="dark"] .table-control-button:hover {
-    background-color: #777;
+    background-color: #555;
+}
+
+body[data-theme="dark"] .styling-buttons button {
+    color: #444;
+    background-color: #e0e0e0;
 }
 
 /* Table Preview Area */
@@ -1263,4 +1368,45 @@ body[data-theme="dark"] .bodyoptns a {
 
 body[data-theme="dark"] .bodyoptns a:hover {
     color: #A5D6A7;
+}
+
+.mode-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 12px;
+    margin: 10px 0;
+    background-color: #f5f5f5;
+    border-radius: 6px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.mode-toggle label {
+    font-size: 14px;
+    color: #555;
+    font-weight: 500;
+}
+
+body[data-theme="dark"] .mode-toggle {
+    background-color: rgba(102, 102, 102, 0.7);
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+body[data-theme="dark"] .mode-toggle label {
+    color: #fff;
+}
+
+h2.bmc {
+    cursor: pointer;
+}
+
+.popup-body h2.bmc {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 30px;
+    margin: 0;
+    opacity: 0;
+    z-index: 9999;
 }

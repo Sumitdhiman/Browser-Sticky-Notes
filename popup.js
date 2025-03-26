@@ -15,7 +15,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const insertDateButton = document.getElementById('insertDateButton');
     const toggleTableMode = document.getElementById('toggleTableMode');
     const spreadsheetContainer = document.getElementById('spreadsheetContainer');
-    const modeToggle = document.getElementById('modeToggle');
 
     let currentNote = 'note1';
     let enableTabs = true;
@@ -45,7 +44,7 @@ document.addEventListener('DOMContentLoaded', () => {
         'lastActiveTab': 'note1',
         'showStylingButtons': true,
         'tableMode': false,
-        'hideTableModeToggle': false 
+        'tableModeUnlocked': false
     }, (items) => {
         noteContent.style.backgroundColor = items.textAreaBgColor;
         stylingButtonsContainer.style.display = items.showStylingButtons && !items.tableMode ? 'block' : 'none';
@@ -96,7 +95,11 @@ document.addEventListener('DOMContentLoaded', () => {
             disableTableMode(noteContent, spreadsheetContainer, tabContainer, insertDateButton, enableTabs);
         }
         
-        modeToggle.style.display = items.hideTableModeToggle ? 'flex' : 'none';
+        // Show table mode toggle if unlocked
+        const modeToggle = document.getElementById('modeToggle');
+        if (modeToggle && items.tableModeUnlocked) {
+            modeToggle.classList.add('visible');
+        }
     });
 
     // Handle tab clicks
@@ -263,7 +266,23 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-  
+    // Listen for unlock message
+    chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+        if (request.action === 'unlockTableMode') {
+            const modeToggle = document.getElementById('modeToggle');
+            if (modeToggle) {
+                modeToggle.classList.add('visible');
+            }
+        }
+        if (request.action === 'addTextToNote') {
+            // Only update if we're on the correct note tab
+            if (currentNote === request.noteId) {
+                // Append the new text to the note content
+                noteContent.innerHTML += request.selectedText;
+                updateWordCount(); // Update word count if it's enabled
+            }
+        }
+    });
 
     boldButton.addEventListener('click', () => {
         noteContent.focus(); // Focus first
@@ -396,17 +415,6 @@ document.addEventListener('DOMContentLoaded', () => {
     noteContent.addEventListener('keyup', updateButtonStates); // For keyboard shortcuts
     noteContent.addEventListener('mouseup', updateButtonStates);
 
-    chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-        if (request.action === 'addTextToNote') {
-            // Only update if we're on the correct note tab
-            if (currentNote === request.noteId) {
-                // Append the new text to the note content
-                noteContent.innerHTML += request.selectedText;
-                updateWordCount(); // Update word count if it's enabled
-            }
-        }
-    });
-
     if (!toggleTableMode || !noteContent || !spreadsheetContainer) {
         console.error("One or more required elements are missing. Please ensure that popup.html contains elements with ids: toggleTableMode, noteContent, and spreadsheetContainer.");
         return;
@@ -430,16 +438,6 @@ document.addEventListener('DOMContentLoaded', () => {
             spreadsheetContainer.saveTimeout = setTimeout(() => {
                 saveTableContent(spreadsheetContainer);
             }, 500); // Save after 500ms of no input
-        }
-    });
-
-    chrome.storage.onChanged.addListener((changes) => {
-        if (changes.hideTableModeToggle) {
-            modeToggle.style.display = !changes.hideTableModeToggle.newValue ? 'none' : 'flex';
-        }
-        if (changes.darkMode && toggleTableMode.checked) {
-            const isDarkMode = changes.darkMode.newValue;
-            updateTableCellStyles(isDarkMode);
         }
     });
 
@@ -522,12 +520,80 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     chrome.storage.onChanged.addListener((changes) => {
-        if (changes.hideTableModeToggle) {
-            modeToggle.style.display = !changes.hideTableModeToggle.newValue ? 'none' : 'flex';
-        }
         if (changes.darkMode && toggleTableMode.checked) {
             const isDarkMode = changes.darkMode.newValue;
             updateTableCellStyles(isDarkMode);
+        }
+    });
+
+    let clickCounter = 0;
+    let lastClickTime = 0;
+    const CLICK_TIMEOUT = 5000; // 2 seconds timeout
+    const REQUIRED_CLICKS = 5;
+    
+    // Function to handle h2.bmc clicks
+    function handleBmcClick() {
+        const currentTime = Date.now();
+        if (currentTime - lastClickTime > CLICK_TIMEOUT) {
+            // Reset counter if too much time has passed
+            clickCounter = 1;
+        } else {
+            clickCounter++;
+        }
+        lastClickTime = currentTime;
+
+        if (clickCounter === REQUIRED_CLICKS) {
+            // Show the mode toggle when click count reached
+            const modeToggle = document.getElementById('modeToggle');
+            if (modeToggle) {
+                modeToggle.classList.add('visible');
+                chrome.storage.sync.set({ 'tableModeUnlocked': true });
+            }
+            
+            // Show a brief message that the feature was unlocked
+            const easterEggMessage = document.createElement('div');
+            easterEggMessage.textContent = ' You found a hidden feature! Table Mode has been unlocked.';
+            easterEggMessage.style.padding = '10px';
+            easterEggMessage.style.marginTop = '10px';
+            easterEggMessage.style.backgroundColor = body.dataset.theme === 'dark' ? '#2a4d7a' : '#f0f8ff';
+            easterEggMessage.style.color = body.dataset.theme === 'dark' ? '#fff' : '#000';
+            easterEggMessage.style.borderRadius = '5px';
+            easterEggMessage.style.transition = 'opacity 2s';
+            easterEggMessage.style.textAlign = 'center';
+            easterEggMessage.style.fontWeight = 'bold';
+            easterEggMessage.style.boxShadow = '0 2px 5px rgba(0,0,0,0.2)';
+            
+            // Add message to the DOM, just after the modeToggle
+            if (modeToggle.parentNode) {
+                modeToggle.parentNode.insertBefore(easterEggMessage, modeToggle.nextSibling);
+            }
+            
+            // Fade out and remove after 5 seconds
+            setTimeout(() => {
+                easterEggMessage.style.opacity = '0';
+                setTimeout(() => {
+                    if (easterEggMessage.parentNode) {
+                        easterEggMessage.parentNode.removeChild(easterEggMessage);
+                    }
+                }, 2000);
+            }, 5000);
+            
+            clickCounter = 0; // Reset counter
+        }
+    }
+
+    // Add click event listeners to h2.bmc elements
+    document.querySelectorAll('h2.bmc').forEach(element => {
+        element.addEventListener('click', handleBmcClick);
+    });
+
+    // Add click listeners to all h2.bmc elements in options page
+    chrome.storage.sync.get('tableModeUnlocked', (items) => {
+        if (items.tableModeUnlocked) {
+            const modeToggle = document.getElementById('modeToggle');
+            if (modeToggle) {
+                modeToggle.classList.add('visible');
+            }
         }
     });
 });

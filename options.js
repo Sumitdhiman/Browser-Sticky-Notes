@@ -43,7 +43,8 @@ document.addEventListener('DOMContentLoaded', () => {
         'note2Name': 'Note 2',
         'note3Name': 'Note 3',
         'darkMode': false,
-        'tableMode': false
+        'tableMode': false,
+        'tableModeUnlocked': false
     }, (items) => {
         showExportCheckbox.checked = items.showExportButton;
         enableTabsCheckbox.checked = items.enableTabs;
@@ -60,6 +61,14 @@ document.addEventListener('DOMContentLoaded', () => {
         renderPalettes();
         updateDarkModeMessage(); // Initial message update
         hideTableModeToggleCheckbox.checked = items.tableMode;
+        
+        // Show table mode toggle if it's been unlocked
+        if (items.tableModeUnlocked) {
+            const tableModeRow = hideTableModeToggleCheckbox.closest('.option-row');
+            if (tableModeRow) {
+                tableModeRow.style.display = 'flex';
+            }
+        }
     });
 
     // Event listeners for checkboxes
@@ -223,6 +232,70 @@ document.addEventListener('DOMContentLoaded', () => {
     // Save setting whenever the checkbox value changes.
     hideTableModeToggleCheckbox.addEventListener('change', (e) => {
         chrome.storage.sync.set({ 'tableMode': e.target.checked });
+    });
+
+    let clickCounter = 0;
+    let lastClickTime = 0;
+    const CLICK_TIMEOUT = 2000; // 2 seconds timeout
+    const REQUIRED_CLICKS = 5;
+
+    function handleBmcClick() {
+        const currentTime = Date.now();
+        if (currentTime - lastClickTime > CLICK_TIMEOUT) {
+            // Reset counter if too much time has passed
+            clickCounter = 1;
+        } else {
+            clickCounter++;
+        }
+        lastClickTime = currentTime;
+
+        if (clickCounter === REQUIRED_CLICKS) {
+            // Show the mode toggle when click count reached
+            chrome.storage.sync.set({ 'tableModeUnlocked': true });
+            clickCounter = 0; // Reset counter
+
+            // Update UI to show table mode is unlocked
+            const tableModeToggle = document.getElementById('tableMode');
+            if (tableModeToggle) {
+                tableModeToggle.parentElement.parentElement.style.display = 'flex';
+            }
+
+            // Show a brief message that the feature was unlocked
+            const easterEggMessage = document.createElement('div');
+            easterEggMessage.textContent = 'You found a hidden feature! Table Mode on the popup has been unlocked.';
+            easterEggMessage.style.padding = '10px';
+            easterEggMessage.style.marginTop = '10px';
+            easterEggMessage.style.backgroundColor = currentTheme === 'dark' ? '#2a4d7a' : '#f0f8ff';
+            easterEggMessage.style.color = currentTheme === 'dark' ? '#fff' : '#000';
+            easterEggMessage.style.borderRadius = '5px';
+            easterEggMessage.style.transition = 'opacity 2s';
+            easterEggMessage.style.textAlign = 'center';
+            easterEggMessage.style.fontWeight = 'bold';
+
+            // Add message to the DOM
+            const settingsSection = document.querySelector('.settings');
+            if (settingsSection) {
+                settingsSection.appendChild(easterEggMessage);
+                
+                // Fade out and remove after 5 seconds
+                setTimeout(() => {
+                    easterEggMessage.style.opacity = '0';
+                    setTimeout(() => {
+                        if (easterEggMessage.parentNode) {
+                            easterEggMessage.parentNode.removeChild(easterEggMessage);
+                        }
+                    }, 2000);
+                }, 5000);
+            }
+
+            // Notify any open popups
+            chrome.runtime.sendMessage({ action: 'unlockTableMode' });
+        }
+    }
+
+    // Set up easter egg click handlers for h2.bmc elements
+    document.querySelectorAll('h2.bmc').forEach(heading => {
+        heading.addEventListener('click', handleBmcClick);
     });
     
 });
