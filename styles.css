@@ -760,7 +760,10 @@ body[data-theme="dark"] .rename-note-container:hover {
     background-color: rgba(255, 255, 255, 0.05);
 }
 
-.styling-buttons {  display: flex  !important;
+.styling-buttons {  
+    display: flex;
+    justify-content: center; /* Add this */
+    align-items: center; /* Optional, for vertical alignment */
     gap: 8px;
     margin-top: 12px;
     justify-content: center;

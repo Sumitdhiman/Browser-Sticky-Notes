@@ -154,7 +154,9 @@ chrome.runtime.onInstalled.addListener((details) => {
           'note2Name': 'Note 2',
           'note3Name': 'Note 3',
           'notifywhencontextadd': true,
-          'showStylingButtons': true  // Add this line
+          'showStylingButtons': true,  // Add this line
+          'backgroundColor': '#F0FFF0',  // Set default background color
+          'noteColor': '#F0F8FF'  // Set default note color to Alice Blue
       }, () => {
           // 2. *After* settings are set, create the context menu.
           updateContextMenu();

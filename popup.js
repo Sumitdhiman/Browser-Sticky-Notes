@@ -47,7 +47,11 @@ document.addEventListener('DOMContentLoaded', () => {
         'tableModeUnlocked': false
     }, (items) => {
         noteContent.style.backgroundColor = items.textAreaBgColor;
-        stylingButtonsContainer.style.display = items.showStylingButtons && !items.tableMode ? 'block' : 'none';
+        if (items.showStylingButtons && !items.tableMode) {
+            stylingButtonsContainer.style.removeProperty('display');
+        } else {
+            stylingButtonsContainer.style.display = 'none';
+        }
         exportButton.style.display = items.showExportButton ? 'block' : 'none';
         enableTabs = items.enableTabs;
         if (items.showWordCount) {
@@ -523,6 +527,22 @@ document.addEventListener('DOMContentLoaded', () => {
         if (changes.darkMode && toggleTableMode.checked) {
             const isDarkMode = changes.darkMode.newValue;
             updateTableCellStyles(isDarkMode);
+        }
+        
+        // Add this block to listen for showStylingButtons changes
+        if (changes.showStylingButtons && !toggleTableMode.checked) {
+            console.log("Styling buttons setting changed to:", changes.showStylingButtons.newValue);
+            stylingButtonsContainer.style.display = changes.showStylingButtons.newValue ? 'block' : 'none';
+        }
+    });
+
+    chrome.storage.onChanged.addListener((changes) => {
+        if (changes.showStylingButtons) {
+            console.log("showStylingButtons changed:", changes.showStylingButtons.newValue);
+            if (!toggleTableMode.checked) {
+                stylingButtonsContainer.style.display = changes.showStylingButtons.newValue ? 'block' : 'none';
+                console.log("Styling buttons visibility updated to:", stylingButtonsContainer.style.display);
+            }
         }
     });
 
