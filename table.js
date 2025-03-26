@@ -95,6 +95,10 @@ function enableTableMode(noteContent, spreadsheetContainer, tabContainer, insert
     const stylingButtonsContainer = document.querySelector('.styling-buttons');
     if (stylingButtonsContainer) stylingButtonsContainer.style.display = 'none';
 
+    // Show table controls
+    const tableControlsContainer = document.getElementById('tableControlsContainer');
+    if (tableControlsContainer) tableControlsContainer.style.display = 'block';
+
     let selectionTip = document.getElementById('tableSelectionTip');
     if (!selectionTip) {
         selectionTip = document.createElement('div');
@@ -110,6 +114,7 @@ function enableTableMode(noteContent, spreadsheetContainer, tabContainer, insert
 
     loadTableContent(spreadsheetContainer).then(() => {
         updateTableCellStyles(document.body.dataset.theme === 'dark');
+        setupTableControls(spreadsheetContainer);
     });
 }
 
@@ -134,6 +139,179 @@ function disableTableMode(noteContent, spreadsheetContainer, tabContainer, inser
 
     const selectionTip = document.getElementById('tableSelectionTip');
     if (selectionTip) selectionTip.style.display = 'none';
+    
+    // Hide table controls
+    const tableControlsContainer = document.getElementById('tableControlsContainer');
+    if (tableControlsContainer) tableControlsContainer.style.display = 'none';
+}
+
+/**
+ * Sets up event listeners for table control buttons
+ * @param {HTMLElement} spreadsheetContainer - The container with the table
+ */
+function setupTableControls(spreadsheetContainer) {
+    const addRowBtn = document.getElementById('addRowButton');
+    const addColBtn = document.getElementById('addColumnButton');
+    const deleteRowBtn = document.getElementById('deleteRowButton');
+    const deleteColBtn = document.getElementById('deleteColumnButton');
+
+    if (addRowBtn) {
+        addRowBtn.onclick = () => addRow(spreadsheetContainer);
+    }
+    
+    if (addColBtn) {
+        addColBtn.onclick = () => addColumn(spreadsheetContainer);
+    }
+    
+    if (deleteRowBtn) {
+        deleteRowBtn.onclick = () => deleteRow(spreadsheetContainer);
+    }
+    
+    if (deleteColBtn) {
+        deleteColBtn.onclick = () => deleteColumn(spreadsheetContainer);
+    }
+}
+
+/**
+ * Adds a new row to the table
+ * @param {HTMLElement} spreadsheetContainer - The container with the table
+ */
+function addRow(spreadsheetContainer) {
+    const table = spreadsheetContainer.querySelector('table');
+    if (!table) return;
+    
+    // Determine position: if a row is selected, add after that row
+    const selectedCell = spreadsheetContainer.querySelector('.selected-cell');
+    let rowIndex = table.rows.length; // Default to end of table
+    
+    if (selectedCell) {
+        const selectedRow = selectedCell.parentElement;
+        rowIndex = Array.from(table.rows).indexOf(selectedRow) + 1;
+    }
+    
+    const newRow = table.insertRow(rowIndex);
+    const colCount = table.rows[0].cells.length;
+    
+    // Get theme-specific styles
+    const isDarkMode = document.body.dataset.theme === 'dark';
+    const cellBgColor = isDarkMode ? '#2f2f2f' : 'white';
+    const textColor = isDarkMode ? '#ffffff' : '#000';
+    
+    // Add cells to the new row
+    for (let i = 0; i < colCount; i++) {
+        const cell = newRow.insertCell();
+        cell.contentEditable = true;
+        cell.style.border = '1px solid #ccc';
+        cell.style.padding = '5px';
+        cell.style.backgroundColor = cellBgColor;
+        cell.style.color = textColor;
+        cell.style.minHeight = '20px';
+        cell.style.height = '20px';
+        setupCellBehavior(cell);
+    }
+    
+    saveTableContent(spreadsheetContainer);
+    
+    // Temporary highlight to show the new row
+    newRow.style.transition = 'background-color 0.5s ease';
+    newRow.style.backgroundColor = isDarkMode ? '#404d40' : '#e8f5e9';
+    setTimeout(() => {
+        newRow.style.backgroundColor = '';
+    }, 1000);
+}
+
+/**
+ * Adds a new column to the table
+ * @param {HTMLElement} spreadsheetContainer - The container with the table
+ */
+function addColumn(spreadsheetContainer) {
+    const table = spreadsheetContainer.querySelector('table');
+    if (!table || table.rows.length === 0) return;
+    
+    // Determine position: if a cell is selected, add after that column
+    const selectedCell = spreadsheetContainer.querySelector('.selected-cell');
+    let colIndex = table.rows[0].cells.length; // Default to end of table
+    
+    if (selectedCell) {
+        colIndex = Array.from(selectedCell.parentElement.cells).indexOf(selectedCell) + 1;
+    }
+    
+    // Get theme-specific styles
+    const isDarkMode = document.body.dataset.theme === 'dark';
+    const cellBgColor = isDarkMode ? '#2f2f2f' : 'white';
+    const textColor = isDarkMode ? '#ffffff' : '#000';
+    
+    // Add a new cell to each row
+    Array.from(table.rows).forEach(row => {
+        const cell = row.insertCell(colIndex);
+        cell.contentEditable = true;
+        cell.style.border = '1px solid #ccc';
+        cell.style.padding = '5px';
+        cell.style.backgroundColor = cellBgColor;
+        cell.style.color = textColor;
+        cell.style.minHeight = '20px';
+        cell.style.height = '20px';
+        setupCellBehavior(cell);
+        
+        // Temporary highlight to show the new column
+        cell.style.transition = 'background-color 0.5s ease';
+        cell.style.backgroundColor = isDarkMode ? '#404d40' : '#e8f5e9';
+        setTimeout(() => {
+            cell.style.backgroundColor = cellBgColor;
+        }, 1000);
+    });
+    
+    saveTableContent(spreadsheetContainer);
+}
+
+/**
+ * Deletes a row from the table
+ * @param {HTMLElement} spreadsheetContainer - The container with the table
+ */
+function deleteRow(spreadsheetContainer) {
+    const table = spreadsheetContainer.querySelector('table');
+    if (!table || table.rows.length <= 1) return; // Keep at least one row
+    
+    // Find selected row
+    const selectedCell = spreadsheetContainer.querySelector('.selected-cell');
+    if (!selectedCell) {
+        alert('Please select a cell in the row you want to delete');
+        return;
+    }
+    
+    const rowIndex = Array.from(table.rows).indexOf(selectedCell.parentElement);
+    table.deleteRow(rowIndex);
+    
+    saveTableContent(spreadsheetContainer);
+}
+
+/**
+ * Deletes a column from the table
+ * @param {HTMLElement} spreadsheetContainer - The container with the table
+ */
+function deleteColumn(spreadsheetContainer) {
+    const table = spreadsheetContainer.querySelector('table');
+    if (!table || table.rows.length === 0 || table.rows[0].cells.length <= 1) {
+        return; // Keep at least one column
+    }
+    
+    // Find selected column
+    const selectedCell = spreadsheetContainer.querySelector('.selected-cell');
+    if (!selectedCell) {
+        alert('Please select a cell in the column you want to delete');
+        return;
+    }
+    
+    const colIndex = Array.from(selectedCell.parentElement.cells).indexOf(selectedCell);
+    
+    // Delete the cell at the same column index from each row
+    Array.from(table.rows).forEach(row => {
+        if (row.cells.length > colIndex) {
+            row.deleteCell(colIndex);
+        }
+    });
+    
+    saveTableContent(spreadsheetContainer);
 }
 
 /**

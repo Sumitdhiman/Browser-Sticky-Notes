@@ -153,7 +153,10 @@ chrome.runtime.onInstalled.addListener((details) => {
           'note1Name': 'Note 1',
           'note2Name': 'Note 2',
           'note3Name': 'Note 3',
-          'notifywhencontextadd': true
+          'notifywhencontextadd': true,
+          'showStylingButtons': true,  // Add this line
+          'backgroundColor': '#F0FFF0',  // Set default background color
+          'noteColor': '#F0F8FF'  // Set default note color to Alice Blue
       }, () => {
           // 2. *After* settings are set, create the context menu.
           updateContextMenu();
@@ -191,3 +194,30 @@ function createNotificationWithTimeout(options) {
         }, NOTIFICATION_TIMEOUT);
     });
 }
+
+let clickCounter = 0;
+let lastClickTime = 0;
+const CLICK_TIMEOUT = 5000; // 5 seconds timeout
+const REQUIRED_CLICKS = 5;
+
+// Add the message listener for handling bmc clicks
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+    if (request.action === 'handleBmcClick') {
+        const currentTime = Date.now();
+        if (currentTime - lastClickTime > CLICK_TIMEOUT) {
+            // Reset counter if too much time has passed
+            clickCounter = 1;
+        } else {
+            clickCounter++;
+        }
+        lastClickTime = currentTime;
+
+        if (clickCounter === REQUIRED_CLICKS) {
+            // Show the mode toggle when click count reached
+            chrome.storage.sync.set({ 'tableModeUnlocked': true });
+            clickCounter = 0; // Reset counter
+            // Notify any open popups
+            chrome.runtime.sendMessage({ action: 'unlockTableMode' });
+        }
+    }
+});
