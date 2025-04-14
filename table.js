@@ -34,6 +34,8 @@ function createDefaultTable(spreadsheetContainer) {
  */
 function saveTableContent(spreadsheetContainer) {
     const tableContent = spreadsheetContainer.innerHTML;
+    // Encrypt before saving
+    const encrypted = encrypt(tableContent);
     let currentNote = 'note1';
     const activeTab = document.querySelector('.tab-button.active');
     if (activeTab) {
@@ -42,8 +44,8 @@ function saveTableContent(spreadsheetContainer) {
     const storageKey = `tableContent_${currentNote}`;
 
     chrome.storage.local.set({
-        [storageKey]: tableContent,
-        tableContent: tableContent // Backward compatibility.
+        [storageKey]: encrypted,
+        tableContent: encrypted // Backward compatibility.
     });
 }
 
@@ -61,14 +63,17 @@ function loadTableContent(spreadsheetContainer) {
         }
         const storageKey = `tableContent_${currentNote}`;
         chrome.storage.local.get([storageKey, 'tableContent'], (result) => {
+            let html = '';
             if (result[storageKey]) {
-                spreadsheetContainer.innerHTML = result[storageKey];
+                html = decrypt(result[storageKey]);
             } else if (result.tableContent) {
-                spreadsheetContainer.innerHTML = result.tableContent;
+                html = decrypt(result.tableContent);
+            }
+            if (html) {
+                spreadsheetContainer.innerHTML = html;
             } else {
                 createDefaultTable(spreadsheetContainer);
             }
-
             spreadsheetContainer.querySelectorAll('td, th').forEach(cell => setupCellBehavior(cell));
             resolve();
         });
@@ -565,4 +570,19 @@ function debugStorageContent() {
     const currentNoteKey = `tableContent_${currentNote}`;
     console.log(`Table content for ${currentNote}:`, items[currentNoteKey] ? 'exists' : 'does not exist');
   });
+}
+function encrypt(text) {
+    return btoa(Array.from(text).map((c, i) => 
+        String.fromCharCode(c.charCodeAt(0) ^ ENCRYPTION_KEY.charCodeAt(i % ENCRYPTION_KEY.length))
+    ).join(''));
+}
+function decrypt(data) {
+    try {
+        const decoded = atob(data);
+        return Array.from(decoded).map((c, i) => 
+            String.fromCharCode(c.charCodeAt(0) ^ ENCRYPTION_KEY.charCodeAt(i % ENCRYPTION_KEY.length))
+        ).join('');
+    } catch {
+        return data; // fallback for unencrypted/legacy data
+    }
 }

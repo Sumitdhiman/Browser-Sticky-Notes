@@ -17,6 +17,7 @@ body {
     opacity: 0;
     animation: slideIn 1s ease-out; 
     transform: translateY(10px);
+    min-width: 300px;
 }
  .popup-open {
     opacity: 1;  
@@ -1005,7 +1006,24 @@ body[data-theme="dark"] #modeToggle label {
         min-width: 60px;
       }
 
-      /* Table Manager Styles */
+      /* Ensure the table cells have consistent width */
+#spreadsheetContainer td, 
+#spreadsheetContainer th {
+  min-width: 80px; /* Set a minimum width for cells */
+  max-width: 200px; /* Set a maximum width for cells */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Allow text wrapping when editing a cell */
+#spreadsheetContainer td:focus, 
+#spreadsheetContainer th:focus {
+  white-space: normal;
+  overflow: visible;
+}
+
+/* Table Manager Styles */
 .table-manager-body {
     width: 400px;
     padding: 15px;
@@ -1289,6 +1307,11 @@ body[data-theme="light"] #tableSelectionTip {
     border-radius: 4px;
     background-color: rgba(255, 152, 0, 0.1);
     border: 1px solid rgba(255, 152, 0, 0.2);
+}
+
+/* Add a rule to show it when dark mode is active */
+body[data-theme="dark"] #darkModeMessage {
+    display: block; /* Or 'ruby' if that layout is specifically needed */
 }
 
 /* Fix inconsistent heading styles */

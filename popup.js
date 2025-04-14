@@ -31,7 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Load settings from storage
     chrome.storage.sync.get({
-        'textAreaBgColor': '#F0FFF0',
+        'textAreaBgColor': '#E0FFFF',
         'showExportButton': false,
         'enableTabs': true,
         'showWordCount': true,
@@ -39,7 +39,7 @@ document.addEventListener('DOMContentLoaded', () => {
         'note1Name': 'Note 1',
         'note2Name': 'Note 2',
         'note3Name': 'Note 3',
-        'backgroundColor': '#F0F8FF',
+        'backgroundColor': '#FAFAD2',
         'darkMode': false,
         'lastActiveTab': 'note1',
         'showStylingButtons': true,
@@ -130,8 +130,10 @@ document.addEventListener('DOMContentLoaded', () => {
     function loadCurrentNoteContent() {
         const key = `textAreaContent_${currentNote}`;
         chrome.storage.sync.get([key], (result) => {
-            // Replace newline characters with <br> tags for HTML rendering
-            noteContent.innerHTML = (result[key] || '').replace(/\n/g, '<br>');
+            // Decrypt after loading
+            let content = result[key] || '';
+            content = content ? decrypt(content) : '';
+            noteContent.innerHTML = content.replace(/\n/g, '<br>');
             updateWordCount();
         });
     }
@@ -139,15 +141,17 @@ document.addEventListener('DOMContentLoaded', () => {
     // Save content for the current note
     function saveCurrentNoteContent() {
         const key = `textAreaContent_${currentNote}`;
-        chrome.storage.sync.set({ [key]: noteContent.innerHTML }); // Use innerHTML to save formatting
+        // Encrypt before saving
+        chrome.storage.sync.set({ [key]: encrypt(noteContent.innerHTML) });
     }
 
     // Load content for the single note
     function loadSingleNoteContent() {
         const key = 'textAreaContent';
         chrome.storage.sync.get([key], (result) => {
-            // Replace newline characters with <br> tags for HTML rendering
-            noteContent.innerHTML = (result[key] || '').replace(/\n/g, '<br>');
+            let content = result[key] || '';
+            content = content ? decrypt(content) : '';
+            noteContent.innerHTML = content.replace(/\n/g, '<br>');
             updateWordCount();
         });
     }
@@ -155,7 +159,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Save content for the single note
     function saveSingleNoteContent() {
         const key = 'textAreaContent';
-        chrome.storage.sync.set({ [key]: noteContent.innerHTML }); // Use innerHTML
+        chrome.storage.sync.set({ [key]: encrypt(noteContent.innerHTML) });
     }
 
     // Save content on input
@@ -225,15 +229,15 @@ document.addEventListener('DOMContentLoaded', () => {
     // Listen for messages to update tab names or add text to notes
     chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         if (request.action === 'addTextToNote') {
-            // Ensure the note content is updated with any existing content before appending
             const noteId = request.noteId;
             const key = noteId === 'singleNote' ? 'textAreaContent' : `textAreaContent_${noteId}`;
             chrome.storage.sync.get([key], (result) => {
-                const existingContent = result[key] || '';
+                let existingContent = result[key] || '';
+                existingContent = existingContent ? decrypt(existingContent) : '';
                 const newContent = existingContent + request.selectedText;
-                chrome.storage.sync.set({ [key]: newContent }, () => {
+                chrome.storage.sync.set({ [key]: encrypt(newContent) }, () => {
                     if (enableTabs) {
-                        currentNote = noteId; // Switch to the note that was added to
+                        currentNote = noteId;
                         loadCurrentNoteContent();
                         setActiveTabButton();
                     } else {
@@ -617,3 +621,21 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 });
+
+// Simple XOR encryption for demonstration (same as in table.js)
+const ENCRYPTION_KEY = 'sticky-notes-key';
+function encrypt(text) {
+    return btoa(Array.from(text).map((c, i) => 
+        String.fromCharCode(c.charCodeAt(0) ^ ENCRYPTION_KEY.charCodeAt(i % ENCRYPTION_KEY.length))
+    ).join(''));
+}
+function decrypt(data) {
+    try {
+        const decoded = atob(data);
+        return Array.from(decoded).map((c, i) => 
+            String.fromCharCode(c.charCodeAt(0) ^ ENCRYPTION_KEY.charCodeAt(i % ENCRYPTION_KEY.length))
+        ).join('');
+    } catch {
+        return data; // fallback for unencrypted/legacy data
+    }
+}

@@ -8,55 +8,55 @@
 
 </head>
 <body class="popup-body" data-theme="light">
-    <h2 class="bmc" style="display: none;">Hidden BMC</h2>
-    <div class="header">
-        <h1 class="title">Browser Sticky Notes</h1>
-        <img src="gear.png" id="settingsIcon" title="Settings">
-    </div>
-
-    <!-- Tab Navigation -->
-    <div class="tab-container">
-        <button class="tab-button active" data-note="note1">Note 1</button>
-        <button class="tab-button" data-note="note2">Note 2</button>
-        <button class="tab-button" data-note="note3">Note 3</button>
-    </div>
-
-    <!-- Table Mode Toggle - Always Visible -->
-    <div id="modeToggle" class="mode-toggle">
-        <label for="toggleTableMode">Table Mode</label>
-        <label class="switch">
-            <input type="checkbox" id="toggleTableMode" />
-            <span class="slider round"></span>
-        </label>
-    </div>
-
-    <!-- Table Controls - Initially Hidden -->
-    <div id="tableControlsContainer" class="single-row-controls" style="display: none; margin: 5px 0;">
-        <div class="table-controls">
-            <button id="addRowButton" class="table-control-button"><i class="fas fa-plus"></i> Row</button>
-            <button id="addColumnButton" class="table-control-button"><i class="fas fa-plus"></i> Column</button>
-            <button id="deleteRowButton" class="table-control-button"><i class="fas fa-trash"></i> Row</button>
-            <button id="deleteColumnButton" class="table-control-button"><i class="fas fa-trash"></i> Column</button>
+        <h2 class="bmc" style="display: none;">Hidden BMC</h2>
+        <div class="header">
+            <h1 class="title">Browser Sticky Notes</h1>
+            <img src="gear.png" id="settingsIcon" title="Settings">
         </div>
-    </div>
 
-    <!--  Note Content -->
-    <div id="noteContent" contenteditable="true" style="width: 100%; min-height: 10em !important; border: 1px solid #ccc; border-radius: 5px;"></div>
-<!-- Spreadsheet/Table Mode Container (initially hidden) -->
-  <div id="spreadsheetContainer" style="display: none; margin-top: 10px;"></div>
-    <!-- Styling Buttons -->
-    <div class="styling-buttons">
-        <button id="boldButton"><i class="fas fa-bold"></i></button>
-        <button id="italicButton"><i class="fas fa-italic"></i></button>
-        <button id="underlineButton"><i class="fas fa-underline"></i></button>
-        <button id="insertDateButton"><i class="fas fa-calendar-alt"></i></button>
-        <!-- Note: Use window.debugStorageContent() in console to debug storage -->
-    </div>
+          <!-- Table Mode Toggle - Always Visible -->
+          <div id="modeToggle" class="mode-toggle">
+            <label for="toggleTableMode">Table Mode</label>
+            <label class="switch">
+                <input type="checkbox" id="toggleTableMode" />
+                <span class="slider round"></span>
+            </label>
+        </div>
+        
+        <!-- Tab Navigation -->
+        <div class="tab-container">
+            <button class="tab-button active" data-note="note1">Note 1</button>
+            <button class="tab-button" data-note="note2">Note 2</button>
+            <button class="tab-button" data-note="note3">Note 3</button>
+        </div>
 
-    <!-- Word Count -->
-    <div id="wordCount">Words: 0</div>
-    <button id="exportButton" class="action-button">Export as .txt</button>
-    <div id="resizeHandle"></div>
+        <!-- Table Controls - Initially Hidden -->
+        <div id="tableControlsContainer" class="single-row-controls" style="display: none; margin: 5px 0;">
+            <div class="table-controls">
+                <button id="addRowButton" class="table-control-button"><i class="fas fa-plus"></i> Row</button>
+                <button id="addColumnButton" class="table-control-button"><i class="fas fa-plus"></i> Column</button>
+                <button id="deleteRowButton" class="table-control-button"><i class="fas fa-trash"></i> Row</button>
+                <button id="deleteColumnButton" class="table-control-button"><i class="fas fa-trash"></i> Column</button>
+            </div>
+        </div>
+
+        <!--  Note Content -->
+        <div id="noteContent" contenteditable="true" style="width: 100%; min-height: 10em !important; border: 1px solid #ccc; border-radius: 5px;"></div>
+    <!-- Spreadsheet/Table Mode Container (initially hidden) -->
+      <div id="spreadsheetContainer" style="display: none; margin-top: 10px;"></div>
+        <!-- Styling Buttons -->
+        <div class="styling-buttons">
+            <button id="boldButton"><i class="fas fa-bold"></i></button>
+            <button id="italicButton"><i class="fas fa-italic"></i></button>
+            <button id="underlineButton"><i class="fas fa-underline"></i></button>
+            <button id="insertDateButton"><i class="fas fa-calendar-alt"></i></button>
+            <!-- Note: Use window.debugStorageContent() in console to debug storage -->
+        </div>
+
+        <!-- Word Count -->
+        <div id="wordCount">Words: 0</div>
+        <button id="exportButton" class="action-button">Export as .txt</button>
+        <div id="resizeHandle"></div>
     <script src="table.js"></script>
     <script src="popup.js"></script>
 </body>

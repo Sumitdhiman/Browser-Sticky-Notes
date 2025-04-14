@@ -27,16 +27,16 @@ document.addEventListener('DOMContentLoaded', () => {
         '#E0FFFF', '#FFE4B5', '#F8F8FF', '#FFF8DC', '#FFFACD'
     ];
 
-    let selectedColor = '#F5F5DC'; // Default color
-    let selectedBackgroundColor = '#F0F8FF'; // Default background color
+    let selectedColor = '#E0FFFF'; // Updated default note color
+    let selectedBackgroundColor = '#FAFAD2'; // Updated default background color
     let currentTheme = 'light'; // Default theme
 
     // Load saved preferences
     chrome.storage.sync.get({
         'showExportButton': false,
         'enableTabs': true,
-        'textAreaBgColor': selectedColor,
-        'backgroundColor': selectedBackgroundColor,
+        'textAreaBgColor': selectedColor, // Use updated default
+        'backgroundColor': selectedBackgroundColor, // Use updated default
         'useLargeFont': false,
         'showWordCount': true,
         'note1Name': 'Note 1',
