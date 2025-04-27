@@ -15,9 +15,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const insertDateButton = document.getElementById('insertDateButton');
     const toggleTableMode = document.getElementById('toggleTableMode');
     const spreadsheetContainer = document.getElementById('spreadsheetContainer');
+    const addNoteButton = document.getElementById('addNoteButton');
 
     let currentNote = 'note1';
     let enableTabs = true;
+    let noteCount = 3; // Initial count of default notes
 
     setTimeout(() => {
         popupBody.classList.add('popup-open');
@@ -45,7 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
         'showStylingButtons': true,
         'tableMode': false,
         'tableModeUnlocked': false
-    }, (items) => {
+    }, async (items) => {
         noteContent.style.backgroundColor = items.textAreaBgColor;
         if (items.showStylingButtons && !items.tableMode) {
             stylingButtonsContainer.style.removeProperty('display');
@@ -73,6 +75,7 @@ document.addEventListener('DOMContentLoaded', () => {
             setupTabs();
             currentNote = items.lastActiveTab; // Set the current note to the last active tab
             loadCurrentNoteContent();
+            await restoreCustomNotes();
             setActiveTabButton();
         } else {
             tabContainer.style.display = 'none';
@@ -98,8 +101,7 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log("Initializing in note mode");
             disableTableMode(noteContent, spreadsheetContainer, tabContainer, insertDateButton, enableTabs);
         }
-        
-        // Show table mode toggle if unlocked
+          // Show table mode toggle if unlocked
         const modeToggle = document.getElementById('modeToggle');
         if (modeToggle && items.tableModeUnlocked) {
             modeToggle.classList.add('visible');
@@ -110,7 +112,8 @@ document.addEventListener('DOMContentLoaded', () => {
     function handleTabClick(event) {
         const button = event.currentTarget;
         saveCurrentNoteContent();
-        tabButtons.forEach(btn => btn.classList.remove('active'));
+        // Clear active class from all tabs, including dynamically added ones
+        document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
         button.classList.add('active');
         currentNote = button.getAttribute('data-note');
         loadCurrentNoteContent();
@@ -209,9 +212,7 @@ document.addEventListener('DOMContentLoaded', () => {
         a.click();
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
-    });
-
-    // Word Count Function
+    });    // Word Count Function
     function updateWordCount() {
         if (wordCount.style.display === 'none') return;
         const text = noteContent.innerText.trim(); // Use innerText for plain text
@@ -219,7 +220,8 @@ document.addEventListener('DOMContentLoaded', () => {
         wordCount.textContent = `Words: ${words}`;
     }
     function setActiveTabButton() {
-        tabButtons.forEach(btn => btn.classList.remove('active'));
+        // Get all current tab buttons instead of using the initial tabButtons NodeList
+        document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
         const activeTabButton = document.querySelector(`.tab-button[data-note="${currentNote}"]`);
         if (activeTabButton) {
             activeTabButton.classList.add('active');
@@ -620,6 +622,225 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
     });
+
+    // Helper to assign the lowest available note number (reuses gaps after deletions)
+function getNextNoteNumber() {
+    const usedNumbers = Array.from(document.querySelectorAll('.tab-button[data-note]'))
+        .map(btn => parseInt(btn.getAttribute('data-note').replace('note', ''), 10))
+        .filter(n => !isNaN(n) && n > 3);
+    let i = 4;
+    while (usedNumbers.includes(i)) {
+        i++;
+    }
+    return i;
+}
+
+    // Add a new note tab
+    function addNewNote() {
+        if (toggleTableMode.checked) {
+            alert("Please disable Table Mode before adding new notes");
+            return;
+        }
+
+        // Determine next available note number (reuse deleted slots)
+        const num = getNextNoteNumber();
+        const newNoteId = `note${num}`;
+        const noteName = `Note ${num}`;
+        
+        // Save the current content before switching
+        saveCurrentNoteContent();
+        
+        // Create new tab button
+        const newTabButton = document.createElement('button');
+        newTabButton.className = 'tab-button';
+        newTabButton.setAttribute('data-note', newNoteId);
+        newTabButton.textContent = noteName;
+        
+        // Add a delete icon inside the tab button
+        const deleteIcon = document.createElement('i');
+        deleteIcon.className = 'fas fa-times delete-note-icon';
+        deleteIcon.setAttribute('title', 'Delete this note');
+        deleteIcon.addEventListener('click', (e) => {
+            e.stopPropagation(); // Prevent tab activation when clicking delete
+            deleteNote(newNoteId);
+        });
+        newTabButton.appendChild(deleteIcon);
+        
+        // Add the new tab before the "Add Note" button
+        tabContainer.insertBefore(newTabButton, addNoteButton);
+        
+        // Add event listener to the new tab
+        newTabButton.addEventListener('click', handleTabClick);
+        
+        // Switch to the new tab
+        // Clear active class from all tabs for consistent behavior
+        document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+        newTabButton.classList.add('active');
+        currentNote = newNoteId;
+        
+        // Create empty content for the new tab
+        noteContent.innerHTML = '';
+        updateWordCount();
+        
+        // Save the new note name to storage
+        chrome.storage.sync.set({ 
+            [`${newNoteId}Name`]: noteName,
+            'lastActiveTab': newNoteId
+        });
+        
+        // Add delete icons to all existing tabs if they don't have one
+        addDeleteIconsToTabs();
+        
+        // Ensure only one .active class is present (fix for rare DOM timing issues)
+        setTimeout(() => {
+            document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+            newTabButton.classList.add('active');
+        }, 0);
+    }
+    
+    // Add delete icons to all tab buttons
+    function addDeleteIconsToTabs() {
+        // Skip for the first three default tabs to keep them permanent
+        document.querySelectorAll('.tab-button[data-note^="note"]').forEach(tab => {
+            const noteId = tab.getAttribute('data-note');
+            // Only add delete icons to custom notes (note4 and higher)
+            if (parseInt(noteId.replace('note', '')) > 3 && !tab.querySelector('.delete-note-icon')) {
+                const deleteIcon = document.createElement('i');
+                deleteIcon.className = 'fas fa-times delete-note-icon';
+                deleteIcon.setAttribute('title', 'Delete this note');
+                deleteIcon.addEventListener('click', (e) => {
+                    e.stopPropagation(); // Prevent tab activation
+                    deleteNote(noteId);
+                });
+                tab.appendChild(deleteIcon);
+            }
+        });
+    }
+    
+    // Delete a note
+    function deleteNote(noteId) {
+        // Create confirmation dialog
+        const dialog = document.createElement('div');
+        dialog.className = 'confirmation-dialog';
+        dialog.innerHTML = `
+            <p>Are you sure you want to delete this note?</p>
+            <p>This action cannot be undone.</p>
+            <div class="confirmation-buttons">
+                <button class="confirm-yes">Yes, delete it</button>
+                <button class="confirm-no">Cancel</button>
+            </div>
+        `;
+        document.body.appendChild(dialog);
+        dialog.style.display = 'block';
+        
+        // Handle confirmation button clicks
+        dialog.querySelector('.confirm-yes').addEventListener('click', () => {
+            // Find the tab to remove
+            const tabToRemove = document.querySelector(`.tab-button[data-note="${noteId}"]`);
+            
+            // If this is the active tab, switch to another tab first
+            if (currentNote === noteId) {
+                // Find the previous tab or the first tab if no previous tab
+                const previousTab = tabToRemove.previousElementSibling;
+                const nextTab = tabToRemove.nextElementSibling;
+                
+                let newActiveTab;
+                if (previousTab && previousTab.classList.contains('tab-button')) {
+                    newActiveTab = previousTab;
+                } else if (nextTab && nextTab.classList.contains('tab-button')) {
+                    newActiveTab = nextTab;
+                } else {
+                    // Default to first tab
+                    newActiveTab = document.querySelector('.tab-button[data-note="note1"]');
+                }
+                
+                // Activate the new tab
+                tabButtons.forEach(btn => btn.classList.remove('active'));
+                newActiveTab.classList.add('active');
+                currentNote = newActiveTab.getAttribute('data-note');
+                loadCurrentNoteContent();
+                chrome.storage.sync.set({ 'lastActiveTab': currentNote });
+            }
+            
+            // Remove the tab from DOM
+            tabContainer.removeChild(tabToRemove);
+            
+            // Delete the note data from storage
+            chrome.storage.sync.remove([
+                `textAreaContent_${noteId}`,
+                `${noteId}Name`
+            ]);
+            chrome.storage.local.remove([
+                `tableContent_${noteId}`
+            ]);
+            
+            // Remove the dialog
+            document.body.removeChild(dialog);
+        });
+        
+        dialog.querySelector('.confirm-no').addEventListener('click', () => {
+            document.body.removeChild(dialog);
+        });
+    }
+    
+    // Restore custom notes (beyond the default 3)
+    function restoreCustomNotes() {
+        return new Promise(resolve => {
+            // Get all storage keys to find custom notes
+            chrome.storage.sync.get(null, items => {
+                // Look for note names beyond the default 3
+                const noteNameKeys = Object.keys(items).filter(key => key.match(/^note\d+Name$/) && !['note1Name', 'note2Name', 'note3Name'].includes(key));
+                
+                // Extract note IDs from key names and convert to numbers
+                const customNoteIds = noteNameKeys.map(key => {
+                    const id = key.replace('Name', '');
+                    return { id, number: parseInt(id.replace('note', ''), 10) };
+                });
+                
+                // Sort by note number
+                customNoteIds.sort((a, b) => a.number - b.number);
+                
+                // Update the highest note count
+                if (customNoteIds.length > 0) {
+                    noteCount = Math.max(noteCount, customNoteIds[customNoteIds.length - 1].number);
+                }
+                
+                // Create tabs for each custom note
+                customNoteIds.forEach(({id}) => {
+                    const noteName = items[`${id}Name`];
+                    // Skip if this custom tab already exists
+                    if (document.querySelector(`.tab-button[data-note="${id}"]`)) return;
+                    // Create new tab button
+                    const newTabButton = document.createElement('button');
+                    newTabButton.className = 'tab-button';
+                    newTabButton.setAttribute('data-note', id);
+                    newTabButton.textContent = noteName;
+                    
+                    // Add a delete icon
+                    const deleteIcon = document.createElement('i');
+                    deleteIcon.className = 'fas fa-times delete-note-icon';
+                    deleteIcon.setAttribute('title', 'Delete this note');
+                    deleteIcon.addEventListener('click', (e) => {
+                        e.stopPropagation(); // Prevent tab activation
+                        deleteNote(id);
+                    });
+                    newTabButton.appendChild(deleteIcon);
+                    
+                    // Add the new tab before the "Add Note" button
+                    tabContainer.insertBefore(newTabButton, addNoteButton);
+                    
+                    // Add event listener to the new tab
+                    newTabButton.addEventListener('click', handleTabClick);
+                });
+                resolve();
+            });
+        });
+    }
+
+    // Handle clicking the "Add Note" button
+    if (addNoteButton) {
+        addNoteButton.addEventListener('click', addNewNote);
+    }
 });
 
 // Simple XOR encryption for demonstration (same as in table.js)
