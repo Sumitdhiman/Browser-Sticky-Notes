@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Browser Sticky Notes",
-  "version": "5.0.2",
+  "version": "5.5",
   "description": "Opens a Sticky note on the Page when invoked using Shift+ALT+N.",
   "action": {
     "default_popup": "popup.html"
@@ -14,8 +14,14 @@
   "permissions": [
     "storage",
     "contextMenus",
-    "notifications"
+    "notifications",
+    "sidePanel"
   ],
+
+  "side_panel": {
+    "default_path": "popup.html"
+  },
+
   "background": {
     "service_worker": "background.js"
   },

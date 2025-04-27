@@ -2,13 +2,13 @@
 body {
     font-family: Arial, sans-serif;
     margin: 10px;
-    width: 300px;
+    width: 360px;
     background-color: #D4F6FF;
     border-radius: 10px;
 }
 
 .popup-body {
-    min-height: 200px !important;
+    min-height: 220px !important;
     overflow: hidden; /* Ensure no vertical scrollbar appears by default */
     position: relative;
     display: flex;
@@ -17,6 +17,7 @@ body {
     opacity: 0;
     animation: slideIn 1s ease-out; 
     transform: translateY(10px);
+    min-width: 360px;
 }
  .popup-open {
     opacity: 1;  
@@ -47,7 +48,7 @@ body {
 
 textarea {
     width: 100%;
-    min-height: 10em !important ;
+    min-height: 12em !important ;
     resize: none;
     font-size: 14px;
     padding: 10px;
@@ -147,7 +148,10 @@ textarea {
     border-bottom: none;
     position: relative;
     z-index: 2;
-    overflow: hidden;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: thin;
+    flex-wrap: wrap;
 }
 
 .tab-button {
@@ -158,7 +162,8 @@ textarea {
     cursor: pointer;
     font-size: 14px;
     transition: all 0.2s ease;
-    position: relative;
+    position: relative; /* Needed for absolute positioning of the icon */
+    padding-right: 20px; /* Add space for the delete icon */
     outline: none;
     display: flex;
     align-items: center;
@@ -179,6 +184,7 @@ textarea {
     transform: translateY(0);
     position: relative;
     z-index: 1;
+    padding-left: 20px;
 }
 
 .tab-button.active::after {
@@ -214,6 +220,11 @@ textarea {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     margin-top: -1px;
     padding-top: 15px;
+    width: 100%; 
+    min-height: 13em !important; 
+    border: 1px 
+    solid #ccc; 
+    border-radius: 5px;
 }
 
 @keyframes tabActivate {
@@ -410,8 +421,16 @@ button#renameButton:active {
 
 #renameButton {
     margin-left: 0;
-    width: 100%;
+    width: 80%;
     display: block;
+}
+
+/* Button container for centering */
+.button-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+    width: 100%;
 }
 
 #status,
@@ -583,8 +602,7 @@ button#renameButton:active {
     cursor: pointer;
     font-size: 16px;
     transition: background-color 0.3s;
- 
-   margin-left:30%;
+    /* Removed margin-left:30% to allow proper centering via button-container */
     display: block;
 }
 
@@ -839,7 +857,7 @@ body[data-theme="dark"] .styling-buttons button.active {
     padding: 10px;
     flex-grow: 1;
     overflow-y: auto;
-    height: calc(100% - 150px);
+    height: calc(100% - 120px) !important;
     position: relative;
     margin-bottom: 10px;
     transition: background-color 0.3s ease, height 0.3s ease;
@@ -1005,7 +1023,24 @@ body[data-theme="dark"] #modeToggle label {
         min-width: 60px;
       }
 
-      /* Table Manager Styles */
+      /* Ensure the table cells have consistent width */
+#spreadsheetContainer td, 
+#spreadsheetContainer th {
+  min-width: 80px; /* Set a minimum width for cells */
+  max-width: 200px; /* Set a maximum width for cells */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Allow text wrapping when editing a cell */
+#spreadsheetContainer td:focus, 
+#spreadsheetContainer th:focus {
+  white-space: normal;
+  overflow: visible;
+}
+
+/* Table Manager Styles */
 .table-manager-body {
     width: 400px;
     padding: 15px;
@@ -1233,23 +1268,6 @@ body[data-theme="dark"] #spreadsheetContainer th:hover {
   overflow: visible;
 }
 
-/* Ensure the table cells have consistent width */
-#spreadsheetContainer td, 
-#spreadsheetContainer th {
-  min-width: 80px; /* Set a minimum width for cells */
-  max-width: 200px; /* Set a maximum width for cells */
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-/* Allow text wrapping when editing a cell */
-#spreadsheetContainer td:focus, 
-#spreadsheetContainer th:focus {
-  white-space: normal;
-  overflow: visible;
-}
-
 /* Existing styles */
 body[data-theme="light"] #tableSelectionTip {
   color: #000000 !important;
@@ -1289,6 +1307,11 @@ body[data-theme="light"] #tableSelectionTip {
     border-radius: 4px;
     background-color: rgba(255, 152, 0, 0.1);
     border: 1px solid rgba(255, 152, 0, 0.2);
+}
+
+/* Add a rule to show it when dark mode is active */
+body[data-theme="dark"] #darkModeMessage {
+    display: block; /* Or 'ruby' if that layout is specifically needed */
 }
 
 /* Fix inconsistent heading styles */
@@ -1332,12 +1355,6 @@ h2.bmc::after {
 }
 
 /* Fix button styling inconsistencies */
-#renameButton {
-    margin-left: 0;
-    width: 100%;
-    display: block;
-}
-
 /* Clean up role="status" styles */
 [role="status"] {
     margin-top: 15px;
@@ -1412,4 +1429,91 @@ h2.bmc {
     margin: 0;
     opacity: 0;
     z-index: 9999;
+}
+
+.tab-button {
+    /* ... existing styles ... */
+    position: relative; /* Needed for absolute positioning of the icon */
+    padding-right: 20px; /* Add space for the delete icon */
+}
+
+/* Hide delete icons when not in multi-tab mode (handled by JS display:none on tab-container) */
+/* Or specifically hide if needed */
+.tab-container[style*="display: none"] .delete-note-icon {
+    display: none;
+}
+
+/* Add Note Button and Note Management Styles */
+.add-note-button {
+    padding: 8px 12px;
+    background-color: transparent;
+    border: none;
+    border-radius: 6px 6px 0 0;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    color: #4CAF50;
+    margin-right: 2px;
+    position: relative;
+    transition: background-color 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.add-note-button:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+body[data-theme="dark"] .add-note-button {
+    color: #81C784;
+}
+
+/* Styles for confirmation dialog */
+.confirmation-dialog {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    z-index: 1000;
+    width: 280px;
+    text-align: center;
+    display: none;
+}
+
+body[data-theme="dark"] .confirmation-dialog {
+    background-color: #444;
+    color: white;
+}
+
+.confirmation-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.confirmation-buttons button {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.confirm-yes {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.confirm-no {
+    background-color: #f44336;
+    color: white;
+}
+
+.delete-note-icon {
+    color: red !important;
 }

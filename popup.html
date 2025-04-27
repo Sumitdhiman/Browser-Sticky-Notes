@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
+<head>    <meta charset="UTF-8">
     <title>Browser Sticky Notes</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
@@ -12,13 +11,12 @@
     <div class="header">
         <h1 class="title">Browser Sticky Notes</h1>
         <img src="gear.png" id="settingsIcon" title="Settings">
-    </div>
-
-    <!-- Tab Navigation -->
+    </div>    <!-- Tab Navigation -->
     <div class="tab-container">
         <button class="tab-button active" data-note="note1">Note 1</button>
         <button class="tab-button" data-note="note2">Note 2</button>
         <button class="tab-button" data-note="note3">Note 3</button>
+        <button id="addNoteButton" class="add-note-button" title="Add New Note"><i class="fas fa-plus"></i></button>
     </div>
 
     <!-- Table Mode Toggle - Always Visible -->
@@ -41,7 +39,7 @@
     </div>
 
     <!--  Note Content -->
-    <div id="noteContent" contenteditable="true" style="width: 100%; min-height: 10em !important; border: 1px solid #ccc; border-radius: 5px;"></div>
+    <div id="noteContent" contenteditable="true" ></div>
 <!-- Spreadsheet/Table Mode Container (initially hidden) -->
   <div id="spreadsheetContainer" style="display: none; margin-top: 10px;"></div>
     <!-- Styling Buttons -->

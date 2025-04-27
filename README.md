@@ -12,6 +12,7 @@ A simple browser extension that allows you to create and manage sticky notes dir
 -   Basic text formatting (bold, italic, underline)
 -   Word count
 -   Insert date
+-   **Microsoft Edge Sidebar Support:** Use the extension in the Edge sidebar for easy access while browsing
 
 ## Table Mode
 
