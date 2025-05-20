@@ -55,6 +55,8 @@ document.addEventListener('DOMContentLoaded', () => {
             stylingButtonsContainer.style.display = 'none';
         }
         exportButton.style.display = items.showExportButton ? 'block' : 'none';
+        // Set initial export button label based on table mode
+        exportButton.textContent = items.tableMode ? 'Export CSV' : 'Export TXT';
         enableTabs = items.enableTabs;
         if (items.showWordCount) {
             wordCount.style.display = 'block';
@@ -177,36 +179,37 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Export Button Click
     exportButton.addEventListener('click', () => {
-        let text;
+        // Determine export content and format
+        let dataStr, mimeType, fileName;
         if (toggleTableMode.checked) {
-            // Handle table export
+            // CSV export for table mode
             const table = spreadsheetContainer.querySelector('table');
-            if (table) {
-                const rows = Array.from(table.rows);
-                text = rows.map(row => {
-                    return Array.from(row.cells)
-                        .map(cell => cell.innerText.trim())
-                        .join('\t');
-                }).join('\n');
-            } else {
-                text = ''; // Empty if no table exists
-            }
+            const rows = table ? Array.from(table.rows) : [];
+            dataStr = rows.map(row => {
+                return Array.from(row.cells).map(cell => {
+                    let txt = cell.innerText.trim();
+                    // Escape double quotes
+                    if (txt.includes('"')) txt = txt.replace(/"/g, '""');
+                    // Wrap in quotes if needed
+                    if (/[,"]/.test(txt)) txt = `"${txt}"`;
+                    return txt;
+                }).join(',');
+            }).join('\n');
+            mimeType = 'text/csv';
+            fileName = 'table.csv';
         } else {
-            // Handle regular note export
-            text = noteContent.innerText;
+            // Plain text export for notes
+            dataStr = noteContent.innerText;
+            mimeType = 'text/plain';
+            if (enableTabs) fileName = `${currentNote}.txt`;
+            else fileName = 'note.txt';
         }
-
-        const blob = new Blob([text], { type: 'text/plain' });
+        // Create and trigger download
+        const blob = new Blob([dataStr], { type: mimeType });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        if (toggleTableMode.checked) {
-            a.download = 'table.txt';
-        } else if (enableTabs) {
-            a.download = `${currentNote}.txt`;
-        } else {
-            a.download = 'note.txt';
-        }
+        a.download = fileName;
         a.style.display = 'none';
         document.body.appendChild(a);
         a.click();
@@ -453,6 +456,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     toggleTableMode.addEventListener('change', (e) => {
         console.log("Table mode toggled:", e.target.checked);
+        // Update export button label when toggling modes
+        exportButton.textContent = e.target.checked ? 'Export CSV' : 'Export TXT';
         
         if (e.target.checked) {
             // Save the current note content before switching to table mode

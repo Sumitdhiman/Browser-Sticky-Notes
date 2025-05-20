@@ -118,7 +118,7 @@ The [`popup.js`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\popup.js) file ha
 4.  **Table Mode Integration**: Toggles ([`toggleTableMode`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\popup.js#L17)) between text and table modes using functions from [`table.js`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\table.js) ([`enableTableMode`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\table.js#L68), [`disableTableMode`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\table.js#L101)). Handles table pasting ([`handleTablePaste`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\table.js#L308)).
 5.  **UI Customization**: Applies theme ([`body.dataset.theme`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\popup.js#L90)), background colors, font size based on settings.
 6.  **Resizing**: Implements popup resizing via a handle ([`resizeHandle`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\popup.js#L13)).
-7.  **Export Functionality**: Exports note or table content as a `.txt` file ([`exportButton`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\popup.js#L4)).
+7.  **Export Functionality**: Exports note content as a `.txt` file or table content as a `.csv` file depending on mode ([`exportButton`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\popup.js#L4)).
 8.  **Message Handling**: Listens for messages (`chrome.runtime.onMessage`) to add text, update table content, or unlock table mode.
 9.  **Easter Egg**: Listens for clicks on `h2.bmc` to unlock table mode ([`handleBmcClick`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\popup.js#L476)).
 

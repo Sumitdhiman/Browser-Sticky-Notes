@@ -72,6 +72,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Event listeners for checkboxes
+    // After saving showExportButton preference, ensure popup.js reads it
     showExportCheckbox.addEventListener('change', () => {
         chrome.storage.sync.set({ 'showExportButton': showExportCheckbox.checked });
     });
