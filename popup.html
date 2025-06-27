@@ -41,13 +41,13 @@
     <!--  Note Content -->
     <div id="noteContent" contenteditable="true" ></div>
 <!-- Spreadsheet/Table Mode Container (initially hidden) -->
-  <div id="spreadsheetContainer" style="display: none; margin-top: 10px;"></div>
-    <!-- Styling Buttons -->
+  <div id="spreadsheetContainer" style="display: none; margin-top: 10px;"></div>    <!-- Styling Buttons -->
     <div class="styling-buttons">
         <button id="boldButton"><i class="fas fa-bold"></i></button>
         <button id="italicButton"><i class="fas fa-italic"></i></button>
         <button id="underlineButton"><i class="fas fa-underline"></i></button>
         <button id="insertDateButton"><i class="fas fa-calendar-alt"></i></button>
+        <button id="imageButton" title="Insert Image"><i class="fas fa-image"></i></button>
         <!-- Note: Use window.debugStorageContent() in console to debug storage -->
     </div>
 
@@ -55,7 +55,7 @@
     <div id="wordCount">Words: 0</div>
     <button id="exportButton" class="action-button">Export</button>
     <div id="resizeHandle"></div>
-    <script src="assets/scripts/table.js"></script>
-    <script src="assets/scripts/popup.js"></script>
+    <script src="assets/scripts/table.js" type="module"></script>
+    <script src="assets/scripts/popup.js" type="module"></script>
 </body>
 </html>
