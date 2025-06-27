@@ -1,3 +1,5 @@
+import { encrypt, decrypt } from './encryption.js';
+
 document.addEventListener('DOMContentLoaded', () => {
     const settingsIcon = document.getElementById('settingsIcon');
     const exportButton = document.getElementById('exportButton');
@@ -848,20 +850,3 @@ function getNextNoteNumber() {
     }
 });
 
-// Simple XOR encryption for demonstration (same as in table.js)
-const ENCRYPTION_KEY = 'sticky-notes-key';
-function encrypt(text) {
-    return btoa(Array.from(text).map((c, i) => 
-        String.fromCharCode(c.charCodeAt(0) ^ ENCRYPTION_KEY.charCodeAt(i % ENCRYPTION_KEY.length))
-    ).join(''));
-}
-function decrypt(data) {
-    try {
-        const decoded = atob(data);
-        return Array.from(decoded).map((c, i) => 
-            String.fromCharCode(c.charCodeAt(0) ^ ENCRYPTION_KEY.charCodeAt(i % ENCRYPTION_KEY.length))
-        ).join('');
-    } catch {
-        return data; // fallback for unencrypted/legacy data
-    }
-}

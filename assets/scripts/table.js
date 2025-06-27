@@ -1,3 +1,5 @@
+import { encrypt, decrypt } from './encryption.js';
+
 /**
  * Creates a default table inside the spreadsheet container.
  * @param {HTMLElement} spreadsheetContainer - The container to add the table to.
@@ -570,19 +572,4 @@ function debugStorageContent() {
     const currentNoteKey = `tableContent_${currentNote}`;
     console.log(`Table content for ${currentNote}:`, items[currentNoteKey] ? 'exists' : 'does not exist');
   });
-}
-function encrypt(text) {
-    return btoa(Array.from(text).map((c, i) => 
-        String.fromCharCode(c.charCodeAt(0) ^ ENCRYPTION_KEY.charCodeAt(i % ENCRYPTION_KEY.length))
-    ).join(''));
-}
-function decrypt(data) {
-    try {
-        const decoded = atob(data);
-        return Array.from(decoded).map((c, i) => 
-            String.fromCharCode(c.charCodeAt(0) ^ ENCRYPTION_KEY.charCodeAt(i % ENCRYPTION_KEY.length))
-        ).join('');
-    } catch {
-        return data; // fallback for unencrypted/legacy data
-    }
 }
