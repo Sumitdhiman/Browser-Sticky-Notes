@@ -1,3 +1,4 @@
+import { enableTableMode, disableTableMode, saveTableContent } from './table.js';
 import { encrypt, decrypt } from './encryption.js';
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -137,9 +138,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function loadCurrentNoteContent() {
         const key = `textAreaContent_${currentNote}`;
         chrome.storage.sync.get([key], (result) => {
-            // Decrypt after loading
             let content = result[key] || '';
-            content = content ? decrypt(content) : '';
             noteContent.innerHTML = content.replace(/\n/g, '<br>');
             updateWordCount();
         });
@@ -148,8 +147,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Save content for the current note
     function saveCurrentNoteContent() {
         const key = `textAreaContent_${currentNote}`;
-        // Encrypt before saving
-        chrome.storage.sync.set({ [key]: encrypt(noteContent.innerHTML) });
+        chrome.storage.sync.set({ [key]: noteContent.innerHTML });
     }
 
     // Load content for the single note
@@ -166,7 +164,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Save content for the single note
     function saveSingleNoteContent() {
         const key = 'textAreaContent';
-        chrome.storage.sync.set({ [key]: encrypt(noteContent.innerHTML) });
+        chrome.storage.sync.set({ [key]: noteContent.innerHTML });
     }
 
     // Save content on input

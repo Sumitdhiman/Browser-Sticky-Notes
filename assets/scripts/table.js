@@ -1,5 +1,3 @@
-import { encrypt, decrypt } from './encryption.js';
-
 /**
  * Creates a default table inside the spreadsheet container.
  * @param {HTMLElement} spreadsheetContainer - The container to add the table to.
@@ -36,8 +34,6 @@ function createDefaultTable(spreadsheetContainer) {
  */
 function saveTableContent(spreadsheetContainer) {
     const tableContent = spreadsheetContainer.innerHTML;
-    // Encrypt before saving
-    const encrypted = encrypt(tableContent);
     let currentNote = 'note1';
     const activeTab = document.querySelector('.tab-button.active');
     if (activeTab) {
@@ -46,8 +42,8 @@ function saveTableContent(spreadsheetContainer) {
     const storageKey = `tableContent_${currentNote}`;
 
     chrome.storage.local.set({
-        [storageKey]: encrypted,
-        tableContent: encrypted // Backward compatibility.
+        [storageKey]: tableContent,
+        tableContent: tableContent // Backward compatibility.
     });
 }
 
@@ -67,9 +63,9 @@ function loadTableContent(spreadsheetContainer) {
         chrome.storage.local.get([storageKey, 'tableContent'], (result) => {
             let html = '';
             if (result[storageKey]) {
-                html = decrypt(result[storageKey]);
+                html = result[storageKey];
             } else if (result.tableContent) {
-                html = decrypt(result.tableContent);
+                html = result.tableContent;
             }
             if (html) {
                 spreadsheetContainer.innerHTML = html;
@@ -573,3 +569,15 @@ function debugStorageContent() {
     console.log(`Table content for ${currentNote}:`, items[currentNoteKey] ? 'exists' : 'does not exist');
   });
 }
+
+// Export functions that need to be accessed from other files
+export {
+    createDefaultTable,
+    saveTableContent,
+    loadTableContent,
+    enableTableMode,
+    disableTableMode,
+    setupTableControls,
+    handleTablePaste,
+    updateTableCellStyles
+};
