@@ -135,7 +135,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Load content for the current note
-    function loadCurrentNoteContent() {
+function loadCurrentNoteContent() {
         const key = `textAreaContent_${currentNote}`;
         chrome.storage.sync.get([key], (result) => {
             let content = result[key] || '';
@@ -147,7 +147,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Save content for the current note
     function saveCurrentNoteContent() {
         const key = `textAreaContent_${currentNote}`;
-        chrome.storage.sync.set({ [key]: noteContent.innerHTML });
+        chrome.storage.sync.set({ [key]: noteContent.innerHTML })
     }
 
     // Load content for the single note
@@ -847,4 +847,23 @@ function getNextNoteNumber() {
         addNoteButton.addEventListener('click', addNewNote);
     }
 });
+
+
+// Simple XOR encryption for demonstration (same as in table.js)
+const ENCRYPTION_KEY = 'sticky-notes-key';
+function encrypt(text) {
+    return btoa(Array.from(text).map((c, i) => 
+        String.fromCharCode(c.charCodeAt(0) ^ ENCRYPTION_KEY.charCodeAt(i % ENCRYPTION_KEY.length))
+    ).join(''));
+}
+function decrypt(data) {
+    try {
+        const decoded = atob(data);
+        return Array.from(decoded).map((c, i) => 
+            String.fromCharCode(c.charCodeAt(0) ^ ENCRYPTION_KEY.charCodeAt(i % ENCRYPTION_KEY.length))
+        ).join('');
+    } catch {
+        return data; // fallback for unencrypted/legacy data
+    }
+}
 
