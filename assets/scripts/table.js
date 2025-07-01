@@ -28,14 +28,13 @@ function createDefaultTable(spreadsheetContainer) {
     Array.from(table.getElementsByTagName('td')).forEach(cell => setupCellBehavior(cell));
 }
 
+
 /**
  * Saves the current table content to Chrome local storage.
  * @param {HTMLElement} spreadsheetContainer - The table container element.
  */
 function saveTableContent(spreadsheetContainer) {
     const tableContent = spreadsheetContainer.innerHTML;
-    // Encrypt before saving
-    const encrypted = encrypt(tableContent);
     let currentNote = 'note1';
     const activeTab = document.querySelector('.tab-button.active');
     if (activeTab) {
@@ -44,8 +43,8 @@ function saveTableContent(spreadsheetContainer) {
     const storageKey = `tableContent_${currentNote}`;
 
     chrome.storage.local.set({
-        [storageKey]: encrypted,
-        tableContent: encrypted // Backward compatibility.
+        [storageKey]: tableContent,
+        tableContent: tableContent // Backward compatibility.
     });
 }
 
@@ -65,9 +64,10 @@ function loadTableContent(spreadsheetContainer) {
         chrome.storage.local.get([storageKey, 'tableContent'], (result) => {
             let html = '';
             if (result[storageKey]) {
-                html = decrypt(result[storageKey]);
+                html = result[storageKey];
             } else if (result.tableContent) {
-                html = decrypt(result.tableContent);
+                html = result.tableContent;
+
             }
             if (html) {
                 spreadsheetContainer.innerHTML = html;
@@ -571,18 +571,14 @@ function debugStorageContent() {
     console.log(`Table content for ${currentNote}:`, items[currentNoteKey] ? 'exists' : 'does not exist');
   });
 }
-function encrypt(text) {
-    return btoa(Array.from(text).map((c, i) => 
-        String.fromCharCode(c.charCodeAt(0) ^ ENCRYPTION_KEY.charCodeAt(i % ENCRYPTION_KEY.length))
-    ).join(''));
-}
-function decrypt(data) {
-    try {
-        const decoded = atob(data);
-        return Array.from(decoded).map((c, i) => 
-            String.fromCharCode(c.charCodeAt(0) ^ ENCRYPTION_KEY.charCodeAt(i % ENCRYPTION_KEY.length))
-        ).join('');
-    } catch {
-        return data; // fallback for unencrypted/legacy data
-    }
-}
+// Export functions that need to be accessed from other files
+export {
+    createDefaultTable,
+    saveTableContent,
+    loadTableContent,
+    enableTableMode,
+    disableTableMode,
+    setupTableControls,
+    handleTablePaste,
+    updateTableCellStyles
+};
