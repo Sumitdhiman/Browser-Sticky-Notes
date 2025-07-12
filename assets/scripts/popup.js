@@ -1,3 +1,6 @@
+import { enableTableMode, disableTableMode, saveTableContent, handleTablePaste, updateTableCellStyles } from './table.js';
+import { encrypt, decrypt } from './encryption.js';
+
 document.addEventListener('DOMContentLoaded', () => {
     const settingsIcon = document.getElementById('settingsIcon');
     const exportButton = document.getElementById('exportButton');
@@ -132,12 +135,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Load content for the current note
-    function loadCurrentNoteContent() {
+function loadCurrentNoteContent() {
         const key = `textAreaContent_${currentNote}`;
         chrome.storage.sync.get([key], (result) => {
-            // Decrypt after loading
             let content = result[key] || '';
-            content = content ? decrypt(content) : '';
             noteContent.innerHTML = content.replace(/\n/g, '<br>');
             updateWordCount();
         });
@@ -146,8 +147,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Save content for the current note
     function saveCurrentNoteContent() {
         const key = `textAreaContent_${currentNote}`;
-        // Encrypt before saving
-        chrome.storage.sync.set({ [key]: encrypt(noteContent.innerHTML) });
+        chrome.storage.sync.set({ [key]: noteContent.innerHTML })
     }
 
     // Load content for the single note
@@ -164,7 +164,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Save content for the single note
     function saveSingleNoteContent() {
         const key = 'textAreaContent';
-        chrome.storage.sync.set({ [key]: encrypt(noteContent.innerHTML) });
+        chrome.storage.sync.set({ [key]: noteContent.innerHTML });
     }
 
     // Save content on input
@@ -848,6 +848,7 @@ function getNextNoteNumber() {
     }
 });
 
+
 // Simple XOR encryption for demonstration (same as in table.js)
 const ENCRYPTION_KEY = 'sticky-notes-key';
 function encrypt(text) {
@@ -865,3 +866,4 @@ function decrypt(data) {
         return data; // fallback for unencrypted/legacy data
     }
 }
+
