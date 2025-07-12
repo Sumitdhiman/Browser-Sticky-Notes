@@ -1,4 +1,4 @@
-import { enableTableMode, disableTableMode, saveTableContent } from './table.js';
+import { enableTableMode, disableTableMode, saveTableContent, handleTablePaste, updateTableCellStyles } from './table.js';
 import { encrypt, decrypt } from './encryption.js';
 
 document.addEventListener('DOMContentLoaded', () => {
