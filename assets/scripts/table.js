@@ -28,6 +28,7 @@ function createDefaultTable(spreadsheetContainer) {
     Array.from(table.getElementsByTagName('td')).forEach(cell => setupCellBehavior(cell));
 }
 
+
 /**
  * Saves the current table content to Chrome local storage.
  * @param {HTMLElement} spreadsheetContainer - The table container element.
@@ -66,6 +67,7 @@ function loadTableContent(spreadsheetContainer) {
                 html = result[storageKey];
             } else if (result.tableContent) {
                 html = result.tableContent;
+
             }
             if (html) {
                 spreadsheetContainer.innerHTML = html;
@@ -569,7 +571,6 @@ function debugStorageContent() {
     console.log(`Table content for ${currentNote}:`, items[currentNoteKey] ? 'exists' : 'does not exist');
   });
 }
-
 // Export functions that need to be accessed from other files
 export {
     createDefaultTable,
