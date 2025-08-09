@@ -10,12 +10,16 @@ This document provides a comprehensive overview of the Browser Sticky Notes exte
     *   [Manifest](#manifest)
     *   [Popup Interface](#popup-interface)
     *   [Background Service](#background-service)
+    *   [Content Scripts](#content-scripts)
     *   [Table Functionality](#table-functionality)
     *   [Options Page](#options-page)
+    *   [Website-Specific Notes Page](#website-specific-notes-page)
     *   [Styling](#styling)
 4.  [Data Flow](#data-flow)
 5.  [Key Features Implementation](#key-features-implementation)
     *   [Multi-Note System](#multi-note-system)
+    *   [Website-Specific Notes](#website-specific-notes)
+    *   [Import/Export System](#importexport-system)
     *   [Text Formatting](#text-formatting)
     *   [Table Mode](#table-mode)
     *   [Context Menu Integration](#context-menu-integration)
@@ -28,19 +32,21 @@ This document provides a comprehensive overview of the Browser Sticky Notes exte
 
 ## Overview
 
-Browser Sticky Notes is a browser extension that provides a convenient way to create, edit, and manage notes directly in the browser. It supports multiple notes (configurable), text formatting, an optional table mode for structured data, context menu integration, and customizable appearance settings including dark mode. In Microsoft Edge, it can be used in the sidebar for quick access while browsing.
+Browser Sticky Notes is a comprehensive browser extension that provides advanced note-taking capabilities directly in the browser. It supports multiple notes, website-specific notes that automatically appear on specific URLs, text formatting, table mode for structured data, import/export functionality for backup and sync, context menu integration, and customizable appearance settings including dark mode. The extension can be used in Microsoft Edge's sidebar for quick access while browsing.
 
 ## Architecture
 
-The extension follows a standard browser extension architecture with these main components:
+The extension follows a comprehensive browser extension architecture with these main components:
 
 1.  **Manifest (`manifest.json`)**: Defines the extension's properties, permissions, and entry points.
 2.  **Popup Interface (`popup.html`, `popup.js`)**: The main user interface that appears when clicking the extension icon or using the keyboard shortcut.
 3.  **Background Service (`background.js`)**: Handles background processes like context menu management, keyboard shortcuts, and notifications.
-4.  **Table Functionality (`table.js`)**: Contains the logic for the spreadsheet-like table mode.
-5.  **Options Page (`options.html`, `options.js`)**: Provides customization settings for the extension.
-6.  **Styling (`styles.css`)**: Defines the visual appearance of the popup and options pages.
-7.  **Storage System**: Uses Chrome's storage API (`sync` and `local`) to persist notes, settings, and table data.
+4.  **Content Scripts (`content.js`, `content_style.css`)**: Injected scripts that enable website-specific notes functionality.
+5.  **Table Functionality (`table.js`)**: Contains the logic for the spreadsheet-like table mode.
+6.  **Options Page (`options.html`, `options.js`)**: Provides customization settings and import/export functionality.
+7.  **Website-Specific Notes Page (`sitenotes.html`, `sitenotes.js`, `sitenotes.css`)**: Management interface for viewing and managing all website-specific notes.
+8.  **Styling (`styles.css`)**: Defines the visual appearance of the popup and options pages.
+9.  **Storage System**: Uses Chrome's storage API (`sync` and `local`) to persist notes, settings, table data, and website-specific notes.
 
 ## Core Components
 
@@ -53,23 +59,37 @@ The [`manifest.json`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\manifest.jso
 {
   "manifest_version": 3,
   "name": "Browser Sticky Notes",
-  "version": "5.0.2", // Updated Version
-  "description": "Opens a Sticky note on the Page when invoked using Shift+ALT+N.",
+  "version": "6.0.0", // Updated Version
+  "description": "Create sticky notes, attach notes to specific websites, and manage all your thoughts in one place.",
   "action": {
     "default_popup": "popup.html"
   },
-  "icons": { // Added Icons section
-    "16": "icon16.png",
-    "48": "icon48.png",
-    "128": "icon128.png"
+  "icons": {
+    "16": "assets/icons/icon16.png",
+    "48": "assets/icons/icon48.png",
+    "128": "assets/icons/icon128.png"
   },
   "permissions": [
     "storage",
     "contextMenus",
-    "notifications"
+    "notifications",
+    "tabs",
+    "scripting"
+  ],
+  "host_permissions": [
+    "http://*/*",
+    "https://*/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": ["http://*/*", "https://*/*"],
+      "js": ["assets/scripts/content.js"],
+      "css": ["assets/scripts/content_style.css"],
+      "run_at": "document_end"
+    }
   ],
   "background": {
-    "service_worker": "background.js"
+    "service_worker": "assets/scripts/background.js"
   },
   "options_page": "options.html",
   "commands": {
@@ -86,9 +106,11 @@ The [`manifest.json`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\manifest.jso
 Key aspects:
 - Uses Manifest V3.
 - Defines keyboard shortcut (`Shift+Alt+N`).
-- Requests permissions for `storage`, `contextMenus`, and `notifications`.
-- Specifies background service worker ([`background.js`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\background.js)), popup ([`popup.html`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\popup.html)), and options page ([`options.html`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\options.html)).
-- Includes icons for different resolutions.
+- Requests permissions for `storage`, `contextMenus`, `notifications`, `tabs`, and `scripting` for website-specific notes.
+- Includes `host_permissions` for all HTTP/HTTPS sites to enable content script injection.
+- Defines content scripts that run on all web pages for website-specific notes functionality.
+- Specifies background service worker, popup, and options page.
+- Includes icons for different resolutions in the assets folder structure.
 
 ### Popup Interface
 
@@ -101,10 +123,10 @@ The popup interface consists of:
 - Tab navigation ([`tabContainer`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\popup.js#L6)) for multiple notes (if enabled).
 - Hidden toggle ([`modeToggle`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\popup.js#L103)) for table mode (revealed by easter egg).
 - Hidden table controls ([`tableControlsContainer`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\popup.html#L31)) for adding/deleting rows/columns.
+- Button to create website-specific notes ([`createUrlNoteButton`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\popup.js#L4)).
 - Editable content area ([`noteContent`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\popup.js#L15)).
 - Spreadsheet container ([`spreadsheetContainer`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\popup.js#L17)) for table mode.
 - Styling buttons ([`stylingButtonsContainer`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\popup.js#L14)) for text formatting (bold, italic, underline, insert date).
-- Word count display ([`wordCount`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\popup.js#L5)).
 - Export button ([`exportButton`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\popup.js#L4)).
 - Resizable handle ([`resizeHandle`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\popup.js#L13)).
 - Hidden `h2.bmc` element for easter egg activation.
@@ -114,23 +136,44 @@ The popup interface consists of:
 The [`popup.js`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\popup.js) file handles:
 1.  **Initialization**: Loads settings (`chrome.storage.sync.get`), sets up event listeners, configures UI based on settings (tabs, theme, visibility of elements).
 2.  **Note Management**: Handles tab switching ([`handleTabClick`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\popup.js#L106)), loads ([`loadCurrentNoteContent`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\popup.js#L125), [`loadSingleNoteContent`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\popup.js#L143)) and saves ([`saveCurrentNoteContent`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\popup.js#L135), [`saveSingleNoteContent`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\popup.js#L153)) note/table content. Manages single vs. multi-note modes based on `enableTabs` setting.
-3.  **Text Formatting**: Implements bold ([`boldButton`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\popup.js#L11)), italic ([`italicButton`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\popup.js#L12)), underline ([`underlineButton`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\popup.js#L13)) using `document.execCommand`. Provides date insertion ([`insertDateButton`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\popup.js#L16), [`insertHtmlAtCursor`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\popup.js#L270)). Updates button states ([`updateButtonStates`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\popup.js#L330)). Tracks and displays word count ([`updateWordCount`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\popup.js#L183)).
-4.  **Table Mode Integration**: Toggles ([`toggleTableMode`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\popup.js#L17)) between text and table modes using functions from [`table.js`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\table.js) ([`enableTableMode`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\table.js#L68), [`disableTableMode`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\table.js#L101)). Handles table pasting ([`handleTablePaste`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\table.js#L308)).
-5.  **UI Customization**: Applies theme ([`body.dataset.theme`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\popup.js#L90)), background colors, font size based on settings.
-6.  **Resizing**: Implements popup resizing via a handle ([`resizeHandle`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\popup.js#L13)).
-7.  **Export Functionality**: Exports note content as a `.txt` file or table content as a `.csv` file depending on mode ([`exportButton`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\popup.js#L4)).
-8.  **Message Handling**: Listens for messages (`chrome.runtime.onMessage`) to add text, update table content, or unlock table mode.
-9.  **Easter Egg**: Listens for clicks on `h2.bmc` to unlock table mode ([`handleBmcClick`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\popup.js#L476)).
+3.  **Website-Specific Notes**: Creates notes attached to specific URLs via the "Add Note for this site" button, which injects content scripts and automatically closes the popup.
+4.  **Text Formatting**: Implements bold ([`boldButton`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\popup.js#L11)), italic ([`italicButton`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\popup.js#L12)), underline ([`underlineButton`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\popup.js#L13)) using `document.execCommand`. Provides date insertion ([`insertDateButton`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\popup.js#L16), [`insertHtmlAtCursor`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\popup.js#L270)). Updates button states ([`updateButtonStates`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\popup.js#L330)).
+5.  **Table Mode Integration**: Toggles ([`toggleTableMode`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\popup.js#L17)) between text and table modes using functions from [`table.js`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\table.js) ([`enableTableMode`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\table.js#L68), [`disableTableMode`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\table.js#L101)). Handles table pasting ([`handleTablePaste`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\table.js#L308)).
+6.  **UI Customization**: Applies theme ([`body.dataset.theme`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\popup.js#L90)), background colors, font size based on settings.
+7.  **Resizing**: Implements popup resizing via a handle ([`resizeHandle`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\popup.js#L13)).
+8.  **Export Functionality**: Exports note content as a `.txt` file or table content as a `.csv` file depending on mode ([`exportButton`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\popup.js#L4)).
+9.  **Message Handling**: Listens for messages (`chrome.runtime.onMessage`) to add text, update table content, or unlock table mode.
+10. **Easter Egg**: Listens for clicks on `h2.bmc` to unlock table mode ([`handleBmcClick`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\popup.js#L476)).
 
 ### Background Service
 
 The [`background.js`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\background.js) file runs as a service worker and handles:
 
-1.  **Context Menu Integration**: Creates ([`createContextMenu`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\background.js#L7)) and manages context menu items (`Add to Note...`). Context menu creation is skipped if `tableMode` is enabled. Updates menu ([`updateContextMenu`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\background.js#L62)) when `enableTabs` or `tableMode` settings change. Handles clicks ([`contextMenuClickHandler`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\background.js#L83)) to add selected text to notes.
+1.  **Context Menu Integration**: Creates ([`createContextMenu`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\background.js#L7)) and manages context menu items (`Add to Note...`). Context menu creation is skipped if `tableMode` is enabled. Updates menu ([`updateContextMenu`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\background.js#L62)) when `enableTabs` or `tableMode` settings change. Handles clicks ([`contextMenuClickHandler`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\background.js#L83)) to add selected text to notes with improved error handling.
 2.  **Keyboard Shortcut Handling**: Listens (`chrome.commands.onCommand`) for the `open_popup` command (`Shift+Alt+N`) to open the popup.
-3.  **Notification Management**: Shows notifications (`chrome.notifications.create`) when text is added via context menu (if enabled).
+3.  **Notification Management**: Shows notifications (`chrome.notifications.create`) when text is added via context menu (if enabled) with proper icon paths.
 4.  **Initialization & Updates**: Sets default settings on install (`chrome.runtime.onInstalled`). Updates context menu on install, update, or startup (`chrome.runtime.onStartup`).
 5.  **Message Handling**: Listens for messages (`chrome.runtime.onMessage`) related to the table mode unlock easter egg.
+
+### Content Scripts
+
+The content script system enables website-specific notes functionality:
+
+#### Content Script (`content.js`)
+
+The [`content.js`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\content.js) file handles:
+1.  **Website-Specific Note Creation**: Creates floating note UI elements that attach to specific URLs.
+2.  **Note Storage and Retrieval**: Saves and loads notes using URL-based keys in `chrome.storage.local`.
+3.  **Auto-Display**: Automatically shows existing notes when visiting a page that has an associated note.
+4.  **Draggable Interface**: Makes notes draggable so users can position them anywhere on the page.
+5.  **Note Management**: Provides edit, save, and delete functionality for website notes.
+
+#### Content Styles (`content_style.css`)
+
+The [`content_style.css`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\content_style.css) file provides:
+1.  **Note Styling**: Styles for the floating note interface including background, borders, and shadows.
+2.  **Responsive Design**: Ensures notes display properly across different screen sizes.
+3.  **Z-index Management**: Ensures notes appear above page content without interfering with site functionality.
 
 ### Table Functionality
 
@@ -147,10 +190,22 @@ The [`table.js`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\table.js) file im
 The options page ([`options.html`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\options.html) and [`options.js`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\options.js)) allows users to customize the extension:
 
 1.  **Appearance Settings**: Color selection for notes ([`colorPalette`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\options.js#L2)) and background ([`backgroundColorPalette`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\options.js#L3)). Dark mode toggle ([`darkModeToggle`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\options.js#L11)). Large font toggle ([`useLargeFontCheckbox`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\options.js#L9)).
-2.  **Feature Toggles**: Enable multi-note mode ([`enableTabsCheckbox`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\options.js#L8)). Show export button ([`showExportCheckbox`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\options.js#L7)). Show word count ([`showWordCountCheckbox`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\options.js#L10)). Show styling buttons ([`showStylingButtonsCheckbox`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\options.js#L14)). Notify on context add ([`notifyWhenContextAddCheckbox`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\options.js#L15)). Enable table mode (hidden by default, [`hideTableModeToggleCheckbox`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\options.js#L16)).
-3.  **Note Customization**: Renaming of individual notes ([`note1NameInput`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\options.js#L17), [`note2NameInput`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\options.js#L18), [`note3NameInput`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\options.js#L19), [`renameButton`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\options.js#L20)).
-4.  **Settings Persistence**: Loads settings on initialization and saves all settings to `chrome.storage.sync` on change.
-5.  **Easter Egg**: Listens for clicks on `h2.bmc` elements to unlock and reveal the table mode toggle ([`handleBmcClick`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\options.js#L206)).
+2.  **Feature Toggles**: Enable multi-note mode ([`enableTabsCheckbox`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\options.js#L8)). Show export button ([`showExportCheckbox`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\options.js#L7)). Show styling buttons ([`showStylingButtonsCheckbox`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\options.js#L14)). Notify on context add ([`notifyWhenContextAddCheckbox`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\options.js#L15)). Enable table mode (hidden by default, [`hideTableModeToggleCheckbox`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\options.js#L16)).
+3.  **Import/Export System**: Full backup and restore functionality for all extension data including notes, settings, and website-specific notes using JSON format.
+4.  **Website-Specific Notes Management**: Link to the Site Notes page for viewing and managing all website-specific notes.
+5.  **Note Customization**: Renaming of individual notes ([`note1NameInput`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\options.js#L17), [`note2NameInput`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\options.js#L18), [`note3NameInput`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\options.js#L19), [`renameButton`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\options.js#L20)).
+6.  **Settings Persistence**: Loads settings on initialization and saves all settings to `chrome.storage.sync` on change.
+7.  **Easter Egg**: Listens for clicks on `h2.bmc` elements to unlock and reveal the table mode toggle ([`handleBmcClick`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\options.js#L206)).
+
+### Website-Specific Notes Page
+
+The website-specific notes management system ([`sitenotes.html`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\sitenotes.html), [`sitenotes.js`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\sitenotes.js), and [`sitenotes.css`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\sitenotes.css)) provides:
+
+1.  **Note Management Interface**: Card-based layout displaying all website-specific notes with their associated URLs.
+2.  **Search and Filter**: Ability to filter notes by URL or content for easy management.
+3.  **Delete Functionality**: Individual note deletion with confirmation prompts.
+4.  **Theme Support**: Consistent dark/light theme styling matching the main extension interface.
+5.  **Responsive Design**: Adapts to different screen sizes for optimal viewing experience.
 
 ### Styling
 
@@ -166,11 +221,15 @@ The [`styles.css`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\styles.css) fil
 ## Data Flow
 
 1.  **Note Content Storage**: Text note content is saved to `chrome.storage.sync` using keys like `textAreaContent_note1`, `textAreaContent_note2`, `textAreaContent_note3`, or `textAreaContent` (for single note mode). Content is saved automatically on input events in [`popup.js`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\popup.js).
-2.  **Table Content Storage**: Table HTML content is saved to `chrome.storage.local` using keys like `tableContent_note1`, `tableContent_note2`, `tableContent_note3`. Saving is triggered by input events (debounced) and mode switching in [`table.js`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\table.js).
-3.  **Settings Management**: User preferences (colors, toggles, note names, theme, unlocked status) are stored in `chrome.storage.sync`. Settings are loaded on initialization of [`popup.js`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\popup.js) and [`options.js`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\options.js), and saved immediately on change in [`options.js`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\options.js).
-4.  **Inter-Component Communication**:
+2.  **Website-Specific Notes Storage**: Website notes are saved to `chrome.storage.local` using URL-based keys (e.g., `note_https://example.com`) to handle potentially large amounts of data and maintain performance.
+3.  **Table Content Storage**: Table HTML content is saved to `chrome.storage.local` using keys like `tableContent_note1`, `tableContent_note2`, `tableContent_note3`. Saving is triggered by input events (debounced) and mode switching in [`table.js`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\table.js).
+4.  **Settings Management**: User preferences (colors, toggles, note names, theme, unlocked status) are stored in `chrome.storage.sync`. Settings are loaded on initialization of [`popup.js`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\popup.js) and [`options.js`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\options.js), and saved immediately on change in [`options.js`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\options.js).
+5.  **Import/Export Operations**: The import/export system in [`options.js`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\options.js) handles complete data backup and restoration by combining data from both `chrome.storage.sync` and `chrome.storage.local`.
+6.  **Inter-Component Communication**:
     *   [`background.js`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\background.js) sends messages (`chrome.runtime.sendMessage`) to [`popup.js`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\popup.js) to add text from the context menu or notify about table mode unlock.
     *   [`options.js`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\options.js) sends messages to notify [`popup.js`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\popup.js) about table mode unlock.
+    *   [`popup.js`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\popup.js) injects content scripts via `chrome.scripting.executeScript` for website-specific note functionality.
+    *   [`content.js`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\content.js) operates independently, managing website-specific notes in the page context.
     *   [`popup.js`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\popup.js) directly calls functions in [`table.js`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\table.js) (e.g., [`enableTableMode`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\table.js#L68), [`disableTableMode`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\table.js#L101), [`loadTableContent`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\table.js#L49), [`saveTableContent`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\table.js#L29)).
     *   Storage changes (`chrome.storage.onChanged`) trigger updates in [`background.js`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\background.js) (for context menu) and [`popup.js`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\popup.js) (for styling button visibility, table cell styles).
 
@@ -184,6 +243,25 @@ Managed in [`popup.js`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\popup.js) 
 - Note names are customizable via [`options.js`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\options.js).
 - The last active tab is saved (`lastActiveTab`) and restored.
 - If disabled, tabs are hidden, and a single note (`singleNote`) is used.
+
+### Website-Specific Notes
+
+A core feature that allows users to create notes attached to specific websites:
+- **Creation**: Users can create website-specific notes via the "Add Note for this site" button in the popup.
+- **Auto-Display**: Notes automatically appear when visiting a page that has an associated note.
+- **Storage**: Notes are stored using URL-based keys in `chrome.storage.local` for performance.
+- **Content Script Integration**: Uses [`content.js`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\content.js) injected via `chrome.scripting.executeScript`.
+- **Management Interface**: Complete management system via [`sitenotes.html`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\sitenotes.html) for viewing, editing, and deleting all website notes.
+- **Draggable UI**: Notes can be repositioned on the page and remember their position.
+
+### Import/Export System
+
+Comprehensive backup and restore functionality implemented in [`options.js`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\options.js):
+- **Complete Backup**: Exports all extension data including regular notes, settings, table content, and website-specific notes.
+- **JSON Format**: Uses JSON format for easy data portability and human readability.
+- **Selective Restore**: Import system intelligently handles existing data and provides options for data merging.
+- **File Operations**: Handles file download for export and file upload for import using standard browser APIs.
+- **Data Validation**: Includes validation to ensure imported data is in the correct format.
 
 ### Text Formatting
 
@@ -212,8 +290,9 @@ Managed by [`background.js`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\backg
 - Menu items adapt based on `enableTabs` setting (shows individual notes or a single option).
 - Context menu is *not* created if `tableMode` setting is true.
 - [`contextMenuClickHandler`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\background.js#L83) appends selected text to the appropriate note's content in `chrome.storage.sync`.
+- Improved error handling for context menu operations and messaging.
 - Sends a message to the popup to potentially update the view if open.
-- Shows a notification (if `notifywhencontextadd` is true).
+- Shows a notification (if `notifywhencontextadd` is true) with proper icon paths.
 
 ### Theme Support (Light/Dark)
 
@@ -240,29 +319,36 @@ Implemented in both [`popup.js`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\p
 
 ### Edge Sidebar Integration
 
-The extension can be used in the Microsoft Edge sidebar for quick access while browsing. This allows users to easily create, edit, and manage notes without leaving their current webpage.
+The extension can be used in the Microsoft Edge sidebar for quick access while browsing. This allows users to easily create, edit, and manage both regular notes and website-specific notes without leaving their current webpage. The website-specific notes feature is particularly powerful when used in the sidebar, as users can quickly create notes for the current page they're viewing.
 
 ## Storage Management
 
 The extension uses Chrome's storage API:
 
 1.  **`chrome.storage.sync`**:
-    *   Used for settings (booleans like `darkMode`, `enableTabs`, `showExportButton`, `showWordCount`, `useLargeFont`, `showStylingButtons`, `notifywhencontextadd`, `tableMode`, `tableModeUnlocked`), colors (`textAreaBgColor`, `backgroundColor`), note names (`note1Name`, `note2Name`, `note3Name`), and the last active tab (`lastActiveTab`).
+    *   Used for settings (booleans like `darkMode`, `enableTabs`, `showExportButton`, `useLargeFont`, `showStylingButtons`, `notifywhencontextadd`, `tableMode`, `tableModeUnlocked`), colors (`textAreaBgColor`, `backgroundColor`), note names (`note1Name`, `note2Name`, `note3Name`), and the last active tab (`lastActiveTab`).
     *   Used for text note content (`textAreaContent_note1`, `textAreaContent_note2`, `textAreaContent_note3`, `textAreaContent`).
     *   Syncs across user's devices (subject to quotas).
+    *   Note: Word count setting (`showWordCount`) has been removed from the extension.
 
 2.  **`chrome.storage.local`**:
-    *   Used exclusively for table content HTML (`tableContent_note1`, `tableContent_note2`, `tableContent_note3`). Chosen likely due to potentially larger size compared to text notes, avoiding `sync` storage limitations.
+    *   Used for table content HTML (`tableContent_note1`, `tableContent_note2`, `tableContent_note3`). Chosen due to potentially larger size compared to text notes, avoiding `sync` storage limitations.
+    *   Used for website-specific notes storage with URL-based keys (e.g., `note_https://example.com`) to handle potentially large amounts of site-specific data efficiently.
     *   Stays local to the current device.
+
+3.  **Import/Export Data Management**:
+    *   The import/export system combines data from both storage areas to create complete backups.
+    *   Export creates a comprehensive JSON file containing all notes, settings, and website-specific data.
+    *   Import validates and restores data to appropriate storage locations while preserving data integrity.
 
 ## Event Handling
 
 1.  **DOM Events**:
-    *   `DOMContentLoaded`: Initialize scripts ([`popup.js`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\popup.js), [`options.js`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\options.js)).
-    *   `click`: Handle button clicks (tabs, settings, export, formatting, table controls, save, rename, easter egg).
-    *   `input`: Save note/table content, update word count, update formatting button states.
+    *   `DOMContentLoaded`: Initialize scripts ([`popup.js`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\popup.js), [`options.js`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\options.js), [`sitenotes.js`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\sitenotes.js)).
+    *   `click`: Handle button clicks (tabs, settings, export, formatting, table controls, save, rename, easter egg, website note creation, note deletion).
+    *   `input`: Save note/table content, update formatting button states.
     *   `change`: Handle toggle switch changes (options page, table mode toggle).
-    *   `mousedown`, `mousemove`, `mouseup`: Handle popup resizing.
+    *   `mousedown`, `mousemove`, `mouseup`: Handle popup resizing and note dragging in content scripts.
     *   `keydown`: Handle table cell navigation (Tab, Enter) and copy (Ctrl+C).
     *   `paste`: Handle pasting into table ([`handleTablePaste`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\table.js#L308)).
     *   `blur`, `focus`: Manage table cell selection state and styling.
@@ -277,3 +363,11 @@ The extension uses Chrome's storage API:
     *   `chrome.contextMenus.onClicked`: Handle context menu actions ([`background.js`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\background.js)).
     *   `chrome.storage.onChanged`: React to setting changes (update context menu in [`background.js`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\background.js), update UI in [`popup.js`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\popup.js)).
     *   `chrome.notifications.onClosed`: Clear notification data ([`background.js`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\background.js)).
+
+3.  **Content Script Events**:
+    *   Website-specific note events handled in [`content.js`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\content.js) for creating, editing, saving, and positioning notes on web pages.
+    *   Storage events for loading and saving website-specific notes with URL-based keys.
+
+4.  **File Handling Events**:
+    *   File input events for import functionality in [`options.js`](d:\Developer%20Work\Beta\Browser-Sticky-Notes\options.js).
+    *   Blob creation and download events for export functionality.
