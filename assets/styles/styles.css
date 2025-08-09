@@ -1402,10 +1402,6 @@ h2.bmc::after {
     text-decoration: underline;
 }
 
-body[data-theme="dark"] .action-buttons-container {
-    background-color: rgba(255, 255, 255, 0.05);
-    border-color: rgba(255, 255, 255, 0.1);
-}
 
 body[data-theme="dark"] .action-buttons-container a {
     color: #66bb6a;
