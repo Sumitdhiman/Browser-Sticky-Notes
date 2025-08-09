@@ -13,7 +13,7 @@ A powerful browser extension that allows you to create and manage sticky notes d
 -   **Import/Export:** Backup and restore all your notes and settings with JSON export/import
 -   Basic text formatting (bold, italic, underline)
 -   Insert date functionality
--   **Microsoft Edge Sidebar Support:** Use the extension in the Edge sidebar for easy access while browsing
+-   **Chromium Sidebar Support:** Use the extension in the Edge sidebar for easy access while browsing
 
 ## 🌟 Website-Specific Notes
 
