@@ -4,7 +4,6 @@ import { encrypt, decrypt } from './encryption.js';
 document.addEventListener('DOMContentLoaded', () => {
     const settingsIcon = document.getElementById('settingsIcon');
     const exportButton = document.getElementById('exportButton');
-    const wordCount = document.getElementById('wordCount');
     const tabContainer = document.querySelector('.tab-container');
     const tabButtons = document.querySelectorAll('.tab-button');
     const popupBody = document.querySelector('.popup-body');
@@ -19,6 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const toggleTableMode = document.getElementById('toggleTableMode');
     const spreadsheetContainer = document.getElementById('spreadsheetContainer');
     const addNoteButton = document.getElementById('addNoteButton');
+    const createUrlNoteButton = document.getElementById('createUrlNoteButton');
 
     let currentNote = 'note1';
     let enableTabs = true;
@@ -39,7 +39,6 @@ document.addEventListener('DOMContentLoaded', () => {
         'textAreaBgColor': '#E0FFFF',
         'showExportButton': false,
         'enableTabs': true,
-        'showWordCount': true,
         'useLargeFont': false,
         'note1Name': 'Note 1',
         'note2Name': 'Note 2',
@@ -61,12 +60,6 @@ document.addEventListener('DOMContentLoaded', () => {
         // Set initial export button label based on table mode
         exportButton.textContent = items.tableMode ? 'Export CSV' : 'Export TXT';
         enableTabs = items.enableTabs;
-        if (items.showWordCount) {
-            wordCount.style.display = 'block';
-            updateWordCount();
-        } else {
-            wordCount.style.display = 'none';
-        }
 
         noteContent.style.fontSize = items.useLargeFont ? '18px' : '14px';
 
@@ -111,6 +104,65 @@ document.addEventListener('DOMContentLoaded', () => {
         if (modeToggle && items.tableModeUnlocked) {
             modeToggle.classList.add('visible');
         }
+
+        // Disable URL note button on restricted pages
+        chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+            const url = tabs[0]?.url || "";
+            if (url.startsWith('chrome://') || url.startsWith('https://chromewebstore.google.com')) {
+                createUrlNoteButton.disabled = true;
+                createUrlNoteButton.title = "Cannot create notes on this page.";
+            } else {
+                createUrlNoteButton.disabled = false;
+                createUrlNoteButton.title = "Create a note for this specific website";
+            }
+        });
+    });
+
+    createUrlNoteButton.addEventListener('click', () => {
+        chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+            const activeTab = tabs[0];
+            if (!activeTab || !activeTab.id) {
+                console.error("Could not get active tab.");
+                return;
+            }
+
+            // Check for restricted URLs before attempting to inject.
+            if (activeTab.url && (activeTab.url.startsWith('chrome://') || activeTab.url.startsWith('https://chromewebstore.google.com'))) {
+                console.log("Cannot inject scripts into a restricted page:", activeTab.url);
+                return;
+            }
+
+            // Programmatically inject the content script and CSS.
+            chrome.scripting.executeScript({
+                target: { tabId: activeTab.id },
+                files: ['assets/scripts/content.js']
+            }, () => {
+                // Check for injection errors.
+                if (chrome.runtime.lastError) {
+                    console.error('Script injection failed: ', chrome.runtime.lastError.message);
+                    return;
+                }
+
+                chrome.scripting.insertCSS({
+                    target: { tabId: activeTab.id },
+                    files: ['assets/styles/content_style.css']
+                }, () => {
+                    if (chrome.runtime.lastError) {
+                        console.error('CSS injection failed: ', chrome.runtime.lastError.message);
+                        return;
+                    }
+
+                    // Now that we're sure the scripts are there, send the message.
+                    chrome.tabs.sendMessage(activeTab.id, { action: 'create_note_for_url' }, (response) => {
+                        if (chrome.runtime.lastError) {
+                            console.log("Could not establish connection. The content script might not be ready or has an error.");
+                        }
+                        // Close the popup after the message is sent.
+                        window.close();
+                    });
+                });
+            });
+        });
     });
 
     // Handle tab clicks
@@ -174,7 +226,6 @@ function loadCurrentNoteContent() {
         } else {
             saveSingleNoteContent();
         }
-        updateWordCount();
     });
 
     // Export Button Click
@@ -215,13 +266,7 @@ function loadCurrentNoteContent() {
         a.click();
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
-    });    // Word Count Function
-    function updateWordCount() {
-        if (wordCount.style.display === 'none') return;
-        const text = noteContent.innerText.trim(); // Use innerText for plain text
-        const words = text ? text.split(/\s+/).length : 0;
-        wordCount.textContent = `Words: ${words}`;
-    }
+    });
     function setActiveTabButton() {
         // Get all current tab buttons instead of using the initial tabButtons NodeList
         document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));

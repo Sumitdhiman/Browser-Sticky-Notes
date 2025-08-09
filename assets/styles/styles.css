@@ -234,7 +234,7 @@ textarea {
 
 /* Action Buttons Styles */
 .action-button {
-    background-color: #4a90e2;
+    background-color: #4CAF50;
     color: white;
     border: none;
     padding: 8px 15px;
@@ -243,6 +243,8 @@ textarea {
     font-size: 14px;
     display: flex;
     align-items: center;
+    justify-content: center; /* Center content horizontally */
+    text-align: center;      /* Center multiline text */
     gap: 6px;
     transition: background-color 0.2s ease;
     margin-top: 5px;
@@ -257,7 +259,7 @@ a{
     text-decoration: none;
 }
 .action-button:hover {
-    background-color: #3a7dce;
+    background-color: #3d9141;
 }
 
 .action-button:focus,
@@ -1366,6 +1368,51 @@ h2.bmc::after {
 
 [role="status"].show {
     opacity: 1;
+}
+
+/* Action Buttons Container Styling */
+.action-buttons-container {
+    border-radius: 8px;
+    padding: 15px;
+    margin-top: 10px;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.action-buttons-container p {
+    margin: 0 0 10px 0;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.action-buttons-container p:last-child {
+    margin-bottom: 0;
+}
+
+.action-buttons-container a {
+    color: #4CAF50;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s ease;
+}
+
+.action-buttons-container a:hover {
+    color: #3d9141;
+    text-decoration: underline;
+}
+
+body[data-theme="dark"] .action-buttons-container {
+    background-color: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+body[data-theme="dark"] .action-buttons-container a {
+    color: #66bb6a;
+}
+
+body[data-theme="dark"] .action-buttons-container a:hover {
+    color: #81c784;
 }
 
 /* Fix inconsistent links */

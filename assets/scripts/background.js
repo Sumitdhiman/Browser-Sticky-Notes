@@ -72,8 +72,7 @@ function updateContextMenu() {
     console.log("updateContextMenu called.");
     chrome.contextMenus.removeAll(() => {
         if (chrome.runtime.lastError) {
-            console.error("Error removing context menus:", chrome.runtime.lastError);
-            // Proceed anyway, maybe the menu didn't exist
+            // This error is expected if no context menus exist. We can safely ignore it.
         }
         // --- Remove listener and reset flag *before* creating menu ---
         chrome.contextMenus.onClicked.removeListener(contextMenuClickHandler);
@@ -98,36 +97,45 @@ function contextMenuClickHandler(info, tab) {
     console.log("Context menu clicked:", info);
     const selectedText = info.selectionText;
 
-    chrome.storage.sync.get(['enableTabs', 'notifywhencontextadd'], (items) => {
-        const enableTabs = items.enableTabs;
-        const noteId = enableTabs ? info.menuItemId.replace('add-to-note-', '') : 'singleNote';
-        const noteKey = enableTabs ? `textAreaContent_note${noteId}` : 'textAreaContent';
+        chrome.storage.sync.get(['enableTabs', 'notifywhencontextadd'], (items) => {
+            const enableTabs = items.enableTabs;
+            let noteId, noteKey;
+            if (enableTabs) {
+                // Map menu id to noteId (e.g. '1' -> 'note1')
+                const idx = info.menuItemId.replace('add-to-note-', '');
+                noteId = `note${idx}`;
+                noteKey = `textAreaContent_${noteId}`;
+            } else {
+                noteId = 'singleNote';
+                noteKey = 'textAreaContent';
+            }
 
-        chrome.storage.sync.get([noteKey], (result) => {
-            const existingContent = result[noteKey] || '';
-            const newContent = existingContent ? `${existingContent}\n\n${selectedText}` : selectedText;
-
-            chrome.storage.sync.set({ [noteKey]: newContent }, () => {
-                chrome.runtime.sendMessage({
-                    action: 'addTextToNote',
-                    noteId: noteId,
-                    selectedText: selectedText
-                }).catch(() => {
-                    console.log('Popup is closed, content will be updated when opened');
-                });
+            chrome.storage.sync.get([noteKey], (result) => {
+                const existingContent = result[noteKey] || '';
+                const newContent = existingContent ? `${existingContent}\n\n${selectedText}` : selectedText;
+                // Save raw then notify popup to handle encryption and UI update
+                chrome.storage.sync.set({ [noteKey]: newContent }, () => {
+                    chrome.runtime.sendMessage({
+                        action: 'addTextToNote',
+                        noteId: noteId,
+                        selectedText: selectedText
+                    }).catch(() => {
+                        console.log('Popup is closed, content will be updated when opened');
+                    });
 
                 if (items.notifywhencontextadd !== false) {
                     try {
-                        const noteName = enableTabs ? `Note ${noteId}` : 'Note';
+                        const noteName = enableTabs ? `Note ${info.menuItemId.replace('add-to-note-', '')}` : 'Note';
+                        const iconPath = chrome.runtime.getURL('assets/icons/icon48.png');
                         chrome.notifications.create('', {
                             type: 'basic',
-                            iconUrl: '/icon48.png',
+                            iconUrl: iconPath,
                             title: 'Text Added Successfully',
                             message: `Text has been added to ${noteName}`,
                             priority: 2
                         }, (notificationId) => {
                             if (chrome.runtime.lastError) {
-                                console.error('Notification error:', chrome.runtime.lastError);
+                                console.error('Notification error:', chrome.runtime.lastError.message);
                             }
                         });
                     } catch (error) {
@@ -287,3 +295,6 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         }
     }
 });
+
+// Initialize context menu on service worker startup
+updateContextMenu();

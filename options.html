@@ -54,13 +54,6 @@
                     </label>
                 </div>
                 <div class="option-row">
-                    <label for="showWordCount" class="optionlabel">Show Word Count:</label>
-                    <label class="switch">
-                        <input type="checkbox" id="showWordCount">
-                        <span class="slider round"></span>
-                    </label>
-                </div>
-                <div class="option-row">
                     <label for="darkModeToggle" class="optionlabel">Dark Mode:</label>
                     <label class="switch">
                         <input type="checkbox" id="darkModeToggle">
@@ -100,24 +93,15 @@
            
         </div>
     
-    <div class="secondrow info">
-        <div id="footer1">
-        <h2>Keyboard Shortcut</h2>
-        <p>Use <strong>Shift+ Alt + N</strong> to open the sticky notes popup.</p>
-        <p>You can customize this shortcut in your browser's extension settings.</p>
-        <p>Questions/Bug/Ideas? Report it at <a href="https://github.com/Sumitdhiman/Browser-Sticky-Notes/issues">Github.</a></p>    </div>
-    </div>
-
-<div class="donate"> 
-    <h2 class="bmc">Support us!</h2> <!-- Buy Me a Coffee button container -->
-    <a href="https://www.buymeacoffee.com/yourwindowsguide" target="_blank">
-        <img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee">
-    </a>
+        <div class="othbrowsers"> 
+    <h2 class="bmc">Information</h2> 
     <div id="footer">
-        <p style="text-align: center;">Designed with &hearts; by <a href="https://yourwindowsguide.com">Your Windows Guide</a></p>
-    
-    </div>
+        <ul>
+       <li><p> If you liked Browser Sticky Notes, you can rate it <a href="https://chromewebstore.google.com/detail/browser-sticky-notes/lejgfjllojjoapngaodklohhdpobdhpj">here at the Chrome Store.</a> Available for Firefox as well, <a href="https://addons.mozilla.org/en-US/firefox/addon/browser-sticky-notes/">here.</a> </p></li> 
+    <li><p>Use <strong>Shift+ Alt + N</strong> to open the Notes popup, which you can customize this shortcut in your Extension settings.</p></li>
+    </ul> </div>
 </div>
+
 <div class="moresettings" id="moresettings"> 
     <h2 class="bmc">More Settings</h2> 
     <div id="moresetting">
@@ -137,11 +121,30 @@
         </div>
     </div>
 </div>
-<div class="othbrowsers"> 
-    <h2 class="bmc">Rate us!</h2> 
+
+ <div class="secondrow info">
+        <div id="footer1">
+        <h2>Import/Export and Per-Site Notes</h2>
+        <div class="action-buttons-container">
+            <p>
+                <button id="exportAllButton" class="action-button">Export All Data</button>
+                <button id="importButton" class="action-button">Import All Data</button>
+                <input type="file" id="importFileInput" accept="application/json" style="display:none;">
+            </p>
+            <div id="importStatus" role="status"></div>
+            <p style="text-align: center;"><a href="sitenotes.html" target="_blank">View all notes for specific pages</a></p>
+        </div>
+       </div>
+    </div>
+
+    <div class="donate"> 
+    <h2 class="bmc">Support us!</h2> <!-- Buy Me a Coffee button container -->
+    <a href="https://www.buymeacoffee.com/yourwindowsguide" target="_blank">
+        <img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee">
+    </a>
     <div id="footer">
-        <p> If you liked Browser Sticky Notes, you can rate it <a href="https://chromewebstore.google.com/detail/browser-sticky-notes/lejgfjllojjoapngaodklohhdpobdhpj">here at the Chrome Store.</a></p></p>
-        <p> Available for Firefox as well, <a href="https://addons.mozilla.org/en-US/firefox/addon/browser-sticky-notes/">here.</a> </p>
+        <p style="text-align: center;">Designed with &hearts; by <a href="https://yourwindowsguide.com">Your Windows Guide</a></p>
+     <p style="text-align: center;">Questions/Bug/Ideas? Report it at <a href="https://github.com/Sumitdhiman/Browser-Sticky-Notes/issues">Github.</a></p>
     </div>
 </div>
 

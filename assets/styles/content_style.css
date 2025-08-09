@@ -1,0 +1,55 @@
+/* assets/styles/content_style.css */
+#website-sticky-note {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  width: 250px;
+  height: 200px;
+  background-color: #ffefa6;
+  border: 1px solid #d4c68a;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  z-index: 999999;
+  display: flex;
+  flex-direction: column;
+  font-family: 'Arial', sans-serif;
+  color: #333;
+}
+
+#website-sticky-note-header {
+  padding: 8px;
+  background-color: #f9e79f;
+  border-bottom: 1px solid #d4c68a;
+  cursor: move;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: bold;
+}
+
+#website-sticky-note-textarea {
+  flex-grow: 1;
+  padding: 10px;
+  border: none;
+  background: transparent;
+  outline: none;
+  resize: none;
+  font-size: 14px;
+  line-height: 1.4;
+  color: #333;
+}
+
+#website-sticky-note-close {
+  cursor: pointer;
+  border: none;
+  background: none;
+  font-size: 16px;
+  font-weight: bold;
+  color: #888;
+}
+
+#website-sticky-note-close:hover {
+  color: #000;
+}

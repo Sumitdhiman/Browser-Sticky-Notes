@@ -1,21 +1,21 @@
 {
   "manifest_version": 3,
   "name": "Browser Sticky Notes",
-  "version": "6.0.3",
+  "version": "6.8",
   "description": "Opens a Sticky note on the Page when invoked using Shift+ALT+N.",
   "action": {
     "default_popup": "popup.html"
-  },
-  "icons": {
-    "16": "assets/icons/icon16.png",
-    "48": "assets/icons/icon48.png",
-    "128": "assets/icons/icon128.png"
   },
   "permissions": [
     "storage",
     "contextMenus",
     "notifications",
-    "sidePanel"
+    "sidePanel",
+    "tabs",
+    "scripting"
+  ],
+  "host_permissions": [
+    "<all_urls>"
   ],
 
   "side_panel": {
@@ -33,5 +33,18 @@
       },
       "description": "Opens the popup"
     }
+  },
+  "content_scripts": [
+    {
+      "matches": ["http://*/*", "https://*/*"],
+      "js": ["assets/scripts/content.js"],
+      "css": ["assets/styles/content_style.css"],
+      "run_at": "document_idle"
+    }
+  ],
+  "icons": {
+    "16": "assets/icons/icon16.png",
+    "48": "assets/icons/icon48.png",
+    "128": "assets/icons/icon128.png"
   }
 }

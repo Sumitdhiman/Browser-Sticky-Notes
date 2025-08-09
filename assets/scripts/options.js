@@ -8,7 +8,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const showExportCheckbox = document.getElementById('showExport');
     const enableTabsCheckbox = document.getElementById('enableTabs');
     const useLargeFontCheckbox = document.getElementById('useLargeFont');
-    const showWordCountCheckbox = document.getElementById('showWordCount');
     const darkModeToggle = document.getElementById('darkModeToggle');
     const body = document.body;
     const darkModeMessage = document.getElementById('darkModeMessage');
@@ -38,7 +37,6 @@ document.addEventListener('DOMContentLoaded', () => {
         'textAreaBgColor': selectedColor, // Use updated default
         'backgroundColor': selectedBackgroundColor, // Use updated default
         'useLargeFont': false,
-        'showWordCount': true,
         'note1Name': 'Note 1',
         'note2Name': 'Note 2',
         'note3Name': 'Note 3',
@@ -49,7 +47,6 @@ document.addEventListener('DOMContentLoaded', () => {
         showExportCheckbox.checked = items.showExportButton;
         enableTabsCheckbox.checked = items.enableTabs;
         useLargeFontCheckbox.checked = items.useLargeFont;
-        showWordCountCheckbox.checked = items.showWordCount;
         selectedColor = items.textAreaBgColor;
         selectedBackgroundColor = items.backgroundColor;
         note1NameInput.value = items.note1Name;
@@ -83,10 +80,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     useLargeFontCheckbox.addEventListener('change', () => {
         chrome.storage.sync.set({ 'useLargeFont': useLargeFontCheckbox.checked });
-    });
-
-    showWordCountCheckbox.addEventListener('change', () => {
-        chrome.storage.sync.set({ 'showWordCount': showWordCountCheckbox.checked });
     });
 
     darkModeToggle.addEventListener('change', () => {
@@ -298,5 +291,61 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('h2.bmc').forEach(heading => {
         heading.addEventListener('click', handleBmcClick);
     });
-    
+
+    // Export All Data
+    const exportAllButton = document.getElementById('exportAllButton');
+    const importButton = document.getElementById('importButton');
+    const importFileInput = document.getElementById('importFileInput');
+    const importStatus = document.getElementById('importStatus');
+
+    exportAllButton.addEventListener('click', () => {
+        // Gather all sync and local storage data
+        chrome.storage.sync.get(null, syncItems => {
+            chrome.storage.local.get(null, localItems => {
+                const data = { sync: syncItems, local: localItems };
+                const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'sticky_notes_backup.json';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            });
+        });
+    });
+
+    // Trigger file picker
+    importButton.addEventListener('click', () => importFileInput.click());
+    importFileInput.addEventListener('change', event => {
+        const file = event.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = () => {
+            try {
+                const data = JSON.parse(reader.result);
+                if (data.sync && data.local) {
+                    chrome.storage.sync.set(data.sync, () => {
+                        chrome.storage.local.set(data.local, () => {
+                            importStatus.textContent = 'Import successful!';
+                            importStatus.classList.add('show');
+                            setTimeout(() => { importStatus.classList.remove('show'); }, 2000);
+                            // reload page to reflect settings
+                            window.location.reload();
+                        });
+                    });
+                } else {
+                    importStatus.textContent = 'Invalid backup file.';
+                    importStatus.classList.add('show');
+                    setTimeout(() => { importStatus.classList.remove('show'); }, 2000);
+                }
+            } catch (e) {
+                importStatus.textContent = 'Error parsing file.';
+                importStatus.classList.add('show');
+                setTimeout(() => { importStatus.classList.remove('show'); }, 2000);
+            }
+        };
+        reader.readAsText(file);
+    });
 });
