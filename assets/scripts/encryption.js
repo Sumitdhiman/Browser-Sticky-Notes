@@ -12,7 +12,8 @@ function decrypt(data) {
         return Array.from(atob(data)).map((c, i) =>
             String.fromCharCode(c.charCodeAt(0) ^ ENCRYPTION_KEY.charCodeAt(i % ENCRYPTION_KEY.length))
         ).join('');
-    } catch {
+    } catch (error) {
+        console.error('Decryption failed:', error);
         return '';
     }
 }

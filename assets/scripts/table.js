@@ -94,9 +94,6 @@ function enableTableMode(noteContent, spreadsheetContainer, tabContainer, insert
     insertDateButton.disabled = true;
     insertDateButton.classList.add('disabled');
 
-    const wordCount = document.getElementById('wordCount');
-    if (wordCount) wordCount.style.display = 'none';
-
     const stylingButtonsContainer = document.querySelector('.styling-buttons');
     if (stylingButtonsContainer) stylingButtonsContainer.style.display = 'none';
 

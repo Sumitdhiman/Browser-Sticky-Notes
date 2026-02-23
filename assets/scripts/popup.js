@@ -48,7 +48,8 @@ document.addEventListener('DOMContentLoaded', () => {
         'lastActiveTab': 'note1',
         'showStylingButtons': true,
         'tableMode': false,
-        'tableModeUnlocked': false
+        'tableModeUnlocked': false,
+        'showSiteNoteButton': false
     }, async (items) => {
         noteContent.style.backgroundColor = items.textAreaBgColor;
         if (items.showStylingButtons && !items.tableMode) {
@@ -105,17 +106,22 @@ document.addEventListener('DOMContentLoaded', () => {
             modeToggle.classList.add('visible');
         }
 
+        // Show/hide site note button based on setting
+        createUrlNoteButton.style.display = items.showSiteNoteButton ? 'block' : 'none';
+
         // Disable URL note button on restricted pages
-        chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-            const url = tabs[0]?.url || "";
-            if (url.startsWith('chrome://') || url.startsWith('https://chromewebstore.google.com')) {
-                createUrlNoteButton.disabled = true;
-                createUrlNoteButton.title = "Cannot create notes on this page.";
-            } else {
-                createUrlNoteButton.disabled = false;
-                createUrlNoteButton.title = "Create a note for this specific website";
-            }
-        });
+        if (items.showSiteNoteButton) {
+            chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+                const url = tabs[0]?.url || "";
+                if (url.startsWith('chrome://') || url.startsWith('https://chromewebstore.google.com')) {
+                    createUrlNoteButton.disabled = true;
+                    createUrlNoteButton.title = "Cannot create notes on this page.";
+                } else {
+                    createUrlNoteButton.disabled = false;
+                    createUrlNoteButton.title = "Create a note for this specific website";
+                }
+            });
+        }
     });
 
     createUrlNoteButton.addEventListener('click', () => {
@@ -192,7 +198,6 @@ function loadCurrentNoteContent() {
         chrome.storage.sync.get([key], (result) => {
             let content = result[key] || '';
             noteContent.innerHTML = content.replace(/\n/g, '<br>');
-            updateWordCount();
         });
     }
 
@@ -209,7 +214,6 @@ function loadCurrentNoteContent() {
             let content = result[key] || '';
             content = content ? decrypt(content) : '';
             noteContent.innerHTML = content.replace(/\n/g, '<br>');
-            updateWordCount();
         });
     }
 
@@ -293,7 +297,6 @@ function loadCurrentNoteContent() {
                     } else {
                         loadSingleNoteContent();
                     }
-                    updateWordCount();
                 });
             });
         } else if (request.action === 'getTableContent') {
@@ -337,7 +340,6 @@ function loadCurrentNoteContent() {
             if (currentNote === request.noteId) {
                 // Append the new text to the note content
                 noteContent.innerHTML += request.selectedText;
-                updateWordCount(); // Update word count if it's enabled
             }
         }
     });
@@ -585,26 +587,16 @@ function loadCurrentNoteContent() {
             updateTableCellStyles(isDarkMode);
         }
         
-        // Add this block to listen for showStylingButtons changes
+        // Listen for showStylingButtons changes
         if (changes.showStylingButtons && !toggleTableMode.checked) {
             console.log("Styling buttons setting changed to:", changes.showStylingButtons.newValue);
             stylingButtonsContainer.style.display = changes.showStylingButtons.newValue ? 'block' : 'none';
         }
     });
 
-    chrome.storage.onChanged.addListener((changes) => {
-        if (changes.showStylingButtons) {
-            console.log("showStylingButtons changed:", changes.showStylingButtons.newValue);
-            if (!toggleTableMode.checked) {
-                stylingButtonsContainer.style.display = changes.showStylingButtons.newValue ? 'block' : 'none';
-                console.log("Styling buttons visibility updated to:", stylingButtonsContainer.style.display);
-            }
-        }
-    });
-
     let clickCounter = 0;
     let lastClickTime = 0;
-    const CLICK_TIMEOUT = 5000; // 2 seconds timeout
+    const CLICK_TIMEOUT = 2000; // 2 seconds timeout
     const REQUIRED_CLICKS = 5;
     
     // Function to handle h2.bmc clicks
@@ -730,7 +722,6 @@ function getNextNoteNumber() {
         
         // Create empty content for the new tab
         noteContent.innerHTML = '';
-        updateWordCount();
         
         // Save the new note name to storage
         chrome.storage.sync.set({ 

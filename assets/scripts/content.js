@@ -75,6 +75,7 @@
         createNoteUI('');
       }
       sendResponse({ status: 'note created' });
+      return true; // Indicate async response
     }
   });
 })();

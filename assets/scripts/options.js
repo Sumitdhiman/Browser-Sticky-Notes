@@ -14,6 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const showStylingButtonsCheckbox = document.getElementById('showStylingButtons');
     const notifyWhenContextAddCheckbox = document.getElementById('notifywhencontextadd');
     const hideTableModeToggleCheckbox = document.getElementById('tableMode');
+    const showSiteNoteButtonCheckbox = document.getElementById('showSiteNoteButton');
     const note1NameInput = document.getElementById('note1Name');
     const note2NameInput = document.getElementById('note2Name');
     const note3NameInput = document.getElementById('note3Name');
@@ -180,15 +181,16 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     function updateTabNamesInPopup() {
-        // Check if there's an active popup window
-        chrome.runtime.getViews({ type: "popup" }, (views) => {
-            if (views.length > 0) {
-                chrome.runtime.sendMessage({
-                    action: 'updateTabNames',
-                    note1Name: note1NameInput.value.trim() || 'Note 1',
-                    note2Name: note2NameInput.value.trim() || 'Note 2',
-                    note3Name: note3NameInput.value.trim() || 'Note 3'
-                });
+        // Send message to update tab names in popup (if open)
+        chrome.runtime.sendMessage({
+            action: 'updateTabNames',
+            note1Name: note1NameInput.value.trim() || 'Note 1',
+            note2Name: note2NameInput.value.trim() || 'Note 2',
+            note3Name: note3NameInput.value.trim() || 'Note 3'
+        }, (response) => {
+            // Ignore errors if popup is not open
+            if (chrome.runtime.lastError) {
+                // Popup not open, which is fine
             }
         });
     }
@@ -210,6 +212,17 @@ document.addEventListener('DOMContentLoaded', () => {
     // Save preference on change
     showStylingButtonsCheckbox.addEventListener('change', () => {
         chrome.storage.sync.set({ 'showStylingButtons': showStylingButtonsCheckbox.checked });
+    });
+
+    chrome.storage.sync.get({
+        'showSiteNoteButton': false // Default to false if not set
+    }, (items) => {
+        showSiteNoteButtonCheckbox.checked = items.showSiteNoteButton;
+    });
+    
+    // Save preference on change
+    showSiteNoteButtonCheckbox.addEventListener('change', () => {
+        chrome.storage.sync.set({ 'showSiteNoteButton': showSiteNoteButtonCheckbox.checked });
     });
 
     chrome.storage.sync.get({
