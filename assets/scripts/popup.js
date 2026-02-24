@@ -43,7 +43,7 @@ document.addEventListener('DOMContentLoaded', () => {
         'note1Name': 'Note 1',
         'note2Name': 'Note 2',
         'note3Name': 'Note 3',
-        'backgroundColor': '#FAFAD2',
+        'backgroundColor': 'var(--cs-site-background)',
         'darkMode': false,
         'lastActiveTab': 'note1',
         'showStylingButtons': true,
@@ -85,10 +85,13 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
 
-        popupBody.style.backgroundColor = items.backgroundColor;
-        body.dataset.theme = items.darkMode ? 'dark' : 'light';
         if (items.darkMode) {
-            popupBody.style.backgroundColor = '#444';
+             popupBody.style.background = ''; 
+             body.dataset.theme = 'dark';
+        } else {
+             // Use user-selected background color in light mode
+             popupBody.style.background = items.backgroundColor;
+             body.dataset.theme = 'light';
         }
 
         // Update table mode based on the saved setting
