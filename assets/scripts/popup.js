@@ -44,7 +44,7 @@ document.addEventListener('DOMContentLoaded', () => {
         'note1Name': 'Note 1',
         'note2Name': 'Note 2',
         'note3Name': 'Note 3',
-        'backgroundColor': '#F8F8FF',
+        'backgroundColor': '#FAFAD2',
         'darkMode': false,
         'lastActiveTab': 'note1',
         'showStylingButtons': true,

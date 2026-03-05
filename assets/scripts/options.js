@@ -26,8 +26,8 @@ document.addEventListener('DOMContentLoaded', () => {
         '#E0FFFF', '#FFE4B5', '#F8F8FF', '#FFF8DC', '#FFFACD'
     ];
 
-    let selectedColor = '#FFF0F5'; // Updated default note color
-    let selectedBackgroundColor = '#F8F8FF'; // Updated default background color
+    let selectedColor = '#E0FFFF'; // Updated default note color
+    let selectedBackgroundColor = '#FAFAD2'; // Updated default background color
     let currentTheme = 'light'; // Default theme
 
     // Load saved preferences
