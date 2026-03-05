@@ -10,7 +10,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const useLargeFontCheckbox = document.getElementById('useLargeFont');
     const darkModeToggle = document.getElementById('darkModeToggle');
     const body = document.body;
-    const darkModeMessage = document.getElementById('darkModeMessage');
     const showStylingButtonsCheckbox = document.getElementById('showStylingButtons');
     const notifyWhenContextAddCheckbox = document.getElementById('notifywhencontextadd');
     const hideTableModeToggleCheckbox = document.getElementById('tableMode');
@@ -27,8 +26,8 @@ document.addEventListener('DOMContentLoaded', () => {
         '#E0FFFF', '#FFE4B5', '#F8F8FF', '#FFF8DC', '#FFFACD'
     ];
 
-    let selectedColor = '#E0FFFF'; // Updated default note color
-    let selectedBackgroundColor = '#FAFAD2'; // Updated default background color
+    let selectedColor = '#FFF0F5'; // Updated default note color
+    let selectedBackgroundColor = '#F8F8FF'; // Updated default background color
     let currentTheme = 'light'; // Default theme
 
     // Load saved preferences
@@ -57,7 +56,6 @@ document.addEventListener('DOMContentLoaded', () => {
         currentTheme = items.darkMode ? 'dark' : 'light';
         applyTheme();
         renderPalettes();
-        updateDarkModeMessage(); // Initial message update
         hideTableModeToggleCheckbox.checked = items.tableMode;
         
         // Show table mode toggle if it's been unlocked
@@ -87,7 +85,6 @@ document.addEventListener('DOMContentLoaded', () => {
         currentTheme = darkModeToggle.checked ? 'dark' : 'light';
         chrome.storage.sync.set({ 'darkMode': darkModeToggle.checked });
         applyTheme();
-        updateDarkModeMessage(); // Update message on toggle
     });
 
     function renderPalettes() {
@@ -197,10 +194,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function applyTheme() {
         body.dataset.theme = currentTheme;
-    }
-
-    function updateDarkModeMessage() {
-        darkModeMessage.style.display = darkModeToggle.checked ? 'block' : 'none';
     }
     
     chrome.storage.sync.get({

@@ -19,6 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const spreadsheetContainer = document.getElementById('spreadsheetContainer');
     const addNoteButton = document.getElementById('addNoteButton');
     const createUrlNoteButton = document.getElementById('createUrlNoteButton');
+    const titleElement = document.querySelector('.title');
 
     let currentNote = 'note1';
     let enableTabs = true;
@@ -36,14 +37,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Load settings from storage
     chrome.storage.sync.get({
-        'textAreaBgColor': '#E0FFFF',
+        'textAreaBgColor': '#FFF0F5',
         'showExportButton': false,
         'enableTabs': true,
         'useLargeFont': false,
         'note1Name': 'Note 1',
         'note2Name': 'Note 2',
         'note3Name': 'Note 3',
-        'backgroundColor': '#FAFAD2',
+        'backgroundColor': '#F8F8FF',
         'darkMode': false,
         'lastActiveTab': 'note1',
         'showStylingButtons': true,
@@ -85,10 +86,13 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
 
-        popupBody.style.backgroundColor = items.backgroundColor;
-        body.dataset.theme = items.darkMode ? 'dark' : 'light';
         if (items.darkMode) {
-            popupBody.style.backgroundColor = '#444';
+             popupBody.style.background = ''; 
+             body.dataset.theme = 'dark';
+        } else {
+             // Use user-selected background color in light mode
+             popupBody.style.background = items.backgroundColor;
+             body.dataset.theme = 'light';
         }
 
         // Update table mode based on the saved setting
@@ -96,9 +100,11 @@ document.addEventListener('DOMContentLoaded', () => {
         if (items.tableMode) {
             console.log("Initializing in table mode");
             enableTableMode(noteContent, spreadsheetContainer, tabContainer, insertDateButton);
+            titleElement.textContent = "Browser Sticky Notes - Table Mode";
         } else {
             console.log("Initializing in note mode");
             disableTableMode(noteContent, spreadsheetContainer, tabContainer, insertDateButton, enableTabs);
+            titleElement.textContent = "Browser Sticky Notes";
         }
           // Show table mode toggle if unlocked
         const modeToggle = document.getElementById('modeToggle');
@@ -505,6 +511,7 @@ function loadCurrentNoteContent() {
         console.log("Table mode toggled:", e.target.checked);
         // Update export button label when toggling modes
         exportButton.textContent = e.target.checked ? 'Export CSV' : 'Export TXT';
+        titleElement.textContent = e.target.checked ? 'Browser Sticky Notes - Table Mode' : 'Browser Sticky Notes';
         
         if (e.target.checked) {
             // Save the current note content before switching to table mode

@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Browser Sticky Notes Pro - Lightweight Notes, Table, Export, & More",
-  "version": "7.5",
+  "version": "7.9",
   "description": "Opens a Note Panel / Specific Note for webpage / Table on the Page when invoked using Shift+ALT+N.",
   "action": {
     "default_popup": "popup.html"
